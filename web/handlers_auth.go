@@ -176,9 +176,9 @@ func CreateCookieSession(token *oauth2.Token) (cookie *http.Cookie, err error) {
 	b64 := base64.URLEncoding.EncodeToString(dataRaw)
 
 	// Either the cookie expires in 7 days, or however long the validity of the token is if that is smaller than 7 days
-	cookieExpirey := time.Hour * 24 * 7
+	cookieExpirey := time.Hour * 24 * 14
 	expiresFromNow := time.Until(token.Expiry)
-	if expiresFromNow < time.Hour*24*7 {
+	if expiresFromNow < time.Hour*24*14 {
 		cookieExpirey = expiresFromNow
 	}
 

@@ -14,6 +14,7 @@ import (
 	"github.com/jonas747/dstate"
 	"github.com/jonas747/template"
 	"github.com/jonas747/yagpdb/bot"
+
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/common/scheduledevents2"
 	"github.com/sirupsen/logrus"
@@ -46,6 +47,7 @@ var (
 		"mod":        tmplMod,
 		"fdiv":       tmplFDiv,
 		"sqrt":       tmplSqrt,
+		"bitwiseAnd": tmplBitwiseAnd,
 		"round":      tmplRound,
 		"roundCeil":  tmplRoundCeil,
 		"roundFloor": tmplRoundFloor,
@@ -186,6 +188,8 @@ func (c *Context) setupBaseData() {
 	c.Data["TimeSecond"] = time.Second
 	c.Data["TimeMinute"] = time.Minute
 	c.Data["TimeHour"] = time.Hour
+	c.Data["UnixEpoch"] = time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+	c.Data["DiscordEpoch"] = time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC)
 	c.Data["IsPremium"] = c.IsPremium
 }
 
@@ -378,6 +382,7 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["deleteResponse"] = c.tmplDelResponse
 	c.ContextFuncs["deleteTrigger"] = c.tmplDelTrigger
 	c.ContextFuncs["deleteMessage"] = c.tmplDelMessage
+	c.ContextFuncs["deleteMessageReaction"] = c.tmplDelMessageReaction
 	c.ContextFuncs["deleteAllMessageReactions"] = c.tmplDelAllMessageReactions
 	c.ContextFuncs["getMessage"] = c.tmplGetMessage
 	c.ContextFuncs["getMember"] = c.tmplGetMember
@@ -394,12 +399,12 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["reFindAll"] = c.reFindAll
 	c.ContextFuncs["reFindAllSubmatches"] = c.reFindAllSubmatches
 	c.ContextFuncs["reReplace"] = c.reReplace
-	
+
 	c.ContextFuncs["editChannelTopic"] = c.tmplEditChannelTopic
 	c.ContextFuncs["editChannelName"] = c.tmplEditChannelName
 	c.ContextFuncs["onlineCount"] = c.tmplOnlineCount
 	c.ContextFuncs["onlineCountBots"] = c.tmplOnlineCountBots
-	c.ContextFuncs["editNickname"] =c.tmplEditNickname
+	c.ContextFuncs["editNickname"] = c.tmplEditNickname
 }
 
 type limitedWriter struct {
@@ -459,7 +464,6 @@ func (d SDict) Get(key string) interface{} {
 }
 
 func (d SDict) Del(key string) string {
-	delete(d,key)
+	delete(d, key)
 	return ""
 }
-

@@ -12,6 +12,7 @@ import (
 	"emperror.dev/errors"
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/dutil"
+	//"github.com/jonas747/yagpdb/commands"
 	"github.com/jonas747/yagpdb/common"
 )
 
@@ -42,8 +43,8 @@ func StringKeyDictionary(values ...interface{}) (SDict, error) {
 		s, ok := key.(string)
 		if !ok {
 			return nil, errors.New("Only string keys supported in sdict")
-		}
 
+		}
 		dict[s] = values[i+1]
 	}
 
@@ -316,6 +317,11 @@ func tmplSqrt(arg interface{}) float64 {
 	default:
 		return math.Sqrt(-1)
 	}
+}
+
+func tmplBitwiseAnd(arg1, arg2 int) int {
+	return arg1 & arg2
+
 }
 
 func roleIsAbove(a, b *discordgo.Role) bool {

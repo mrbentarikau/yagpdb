@@ -239,7 +239,7 @@ func BanUserWithDuration(config *Config, guildID, channelID int64, author *disco
 	if deleteMessageDays < 0 {
 		deleteMessageDays = 0
 	}
-	
+
 	err := punish(config, PunishmentBan, guildID, channelID, author, reason, user, duration, deleteMessageDays)
 	if err != nil {
 		return err
