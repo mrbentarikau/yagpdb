@@ -342,7 +342,7 @@
         
         {{range $index, $element := .ManagedGuilds -}}{{if $element.Connected -}}
         <li>
-            <a role="menuitem" tabindex="-1" href="/manage/{{$element.ID}}/home"><i class="fas fa-wrench"></i> {{$element.Name}}</a>
+            <a role="menuitem" tabindex="-1" href="/manage/{{$element.ID}}/home">{{$element.Permissions}}<i class="fas fa-wrench"></i> {{$element.Name}}</a>
         </li>
         {{end}}{{end}}
 
