@@ -3,8 +3,8 @@ package moderation
 import (
 	"context"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"emperror.dev/errors"
 	"github.com/jinzhu/gorm"
@@ -75,13 +75,6 @@ func punish(config *Config, p Punishment, guildID, channelID int64, author *disc
 	gs := bot.State.Guild(true, guildID)
 
 	member, memberNotFound := getMemberWithFallback(gs, user)
-	if !memberNotFound {
-		msg := config.BanMessage
-		if p == PunishmentKick {
-			msg = config.KickMessage
-		}
-		sendPunishDM(config, msg, action, gs, author, member, duration, reason)
-	}
 
 	logLink := ""
 	if channelID != 0 {
@@ -106,6 +99,12 @@ func punish(config *Config, p Punishment, guildID, channelID int64, author *disc
 
 	if err != nil {
 		return err
+	} else if !memberNotFound {
+		msg := config.BanMessage
+		if p == PunishmentKick {
+			msg = config.KickMessage
+		}
+		sendPunishDM(config, msg, action, gs, author, member, duration, reason)
 	}
 
 	logger.Infof("MODERATION: %s %s %s cause %q", author.Username, action.Prefix, user.Username, reason)
