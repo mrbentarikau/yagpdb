@@ -269,6 +269,17 @@ func targetUserID(input interface{}) int64 {
 	switch t := input.(type) {
 	case *discordgo.User:
 		return t.ID
+	case string:
+		str := strings.TrimSpace(t)
+		if strings.HasPrefix(str, "<@") && strings.HasSuffix(str, ">") && (len(str) > 4) {
+			trimmed := str[2 : len(str)-1]
+			if trimmed[0] == '!' {
+				trimmed = trimmed[1:]
+			}
+			str = trimmed
+		}
+
+		return ToInt64(str)
 	default:
 		return ToInt64(input)
 	}
@@ -700,6 +711,49 @@ func (c *Context) tmplGetMember(id interface{}) (*discordgo.Member, error) {
 	}
 
 	return member.DGoCopy(), nil
+}
+
+func (c *Context) tmplGetMemberPresence(target interface{}) (interface{}, error) {
+	if c.IncreaseCheckGenericAPICall() {
+		return "", ErrTooManyAPICalls
+	}
+
+	mID := targetUserID(target)
+
+	member, _ := bot.GetMember(c.GS.ID, mID)
+	if member == nil {
+		return "", nil
+	}
+
+	var reply string
+	if !member.PresenceSet || member.PresenceGame == nil {
+		reply = fmt.Sprintf("%s", member.Username+" has no active presence or is invisible/offline.")
+	} else {
+		//reply = fmt.Sprintf("%s %s %s %s", member.PresenceGame.Name, member.PresenceGame.URL, member.PresenceGame.Details, member.PresenceGame.State)
+		return member.PresenceGame, nil
+	}
+	/*if reply == "Custom Status" {
+		reply = member.PresenceGame.State
+	}*/
+
+	return reply, nil
+}
+
+func (c *Context) tmplSetMemberPresence(target interface{}) (interface{}, error) {
+	if c.IncreaseCheckGenericAPICall() {
+		return "", ErrTooManyAPICalls
+	}
+
+	mID := targetUserID(target)
+
+	member, _ := bot.GetMember(c.GS.ID, mID)
+	if member == nil {
+		return "", nil
+	}
+
+	//member.UpdatePresence()
+
+	return nil, nil
 }
 
 func (c *Context) tmplGetChannel(channel interface{}) (*dstate.ChannelState, error) {

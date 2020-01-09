@@ -386,6 +386,8 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["deleteAllMessageReactions"] = c.tmplDelAllMessageReactions
 	c.ContextFuncs["getMessage"] = c.tmplGetMessage
 	c.ContextFuncs["getMember"] = c.tmplGetMember
+	c.ContextFuncs["getMemberPresence"] = c.tmplGetMemberPresence
+	c.ContextFuncs["setMemberPresence"] = c.tmplSetMemberPresence
 	c.ContextFuncs["getChannel"] = c.tmplGetChannel
 	c.ContextFuncs["addReactions"] = c.tmplAddReactions
 	c.ContextFuncs["addResponseReactions"] = c.tmplAddResponseReactions

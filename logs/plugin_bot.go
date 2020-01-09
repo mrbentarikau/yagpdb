@@ -213,7 +213,20 @@ var cmdUsernames = &commands.YAGCommand{
 	Arguments: []*dcmd.ArgDef{
 		{Name: "User", Type: dcmd.User},
 	},
-	RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
+	/*RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
+	if parsed.GS != nil {
+		config, err := GetConfig(common.PQ, parsed.Context(), parsed.GS.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		if !config.UsernameLoggingEnabled.Bool {
+			return "Username logging is disabled on this server", nil
+		}
+	}*/
+
+	//_, err := paginatedmessages.CreatePaginatedMessage(parsed.GS.ID, parsed.CS.ID, 1, 0, func(p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
+	RunFunc: paginatedmessages.PaginatedCommand(0, func(parsed *dcmd.Data, p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
 		if parsed.GS != nil {
 			config, err := GetConfig(common.PQ, parsed.Context(), parsed.GS.ID)
 			if err != nil {
@@ -221,48 +234,53 @@ var cmdUsernames = &commands.YAGCommand{
 			}
 
 			if !config.UsernameLoggingEnabled.Bool {
-				return "Username logging is disabled on this server", nil
+				noUserLogging := &discordgo.MessageEmbed{
+					Color:       0x277ee3,
+					Description: "Username logging is disabled on this server",
+				}
+				return noUserLogging, nil
 			}
 		}
 
-		_, err := paginatedmessages.CreatePaginatedMessage(parsed.GS.ID, parsed.CS.ID, 1, 0, func(p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
-			target := parsed.Msg.Author
-			if parsed.Args[0].Value != nil {
-				target = parsed.Args[0].Value.(*discordgo.User)
-			}
+		target := parsed.Msg.Author
+		if parsed.Args[0].Value != nil {
+			target = parsed.Args[0].Value.(*discordgo.User)
+		}
 
-			offset := (page - 1) * 15
-			usernames, err := GetUsernames(context.Background(), target.ID, 15, offset)
-			if err != nil {
-				return nil, err
-			}
+		offset := (page - 1) * 15
+		usernames, err := GetUsernames(context.Background(), target.ID, 15, offset)
+		if err != nil {
+			return nil, err
+		}
 
-			if len(usernames) < 1 && page > 1 {
-				return nil, paginatedmessages.ErrNoResults
-			}
+		if len(usernames) < 1 && page > 1 {
+			return nil, paginatedmessages.ErrNoResults
+		}
 
-			out := fmt.Sprintf("Past username of **%s#%s** ```\n", target.Username, target.Discriminator)
-			for _, v := range usernames {
-				out += fmt.Sprintf("%20s: %s\n", v.CreatedAt.Time.UTC().Format(time.RFC822), v.Username.String)
-			}
-			out += "```"
+		out := fmt.Sprintf("Past username of **%s#%s** ```\n", target.Username, target.Discriminator)
+		for _, v := range usernames {
+			out += fmt.Sprintf("%20s: %s\n", v.CreatedAt.Time.UTC().Format(time.RFC822), v.Username.String)
+		}
+		out += "```"
 
-			if len(usernames) < 1 {
-				out = `No logged usernames`
-			}
+		if len(usernames) < 1 {
+			out = `No logged usernames`
+		}
 
-			embed := &discordgo.MessageEmbed{
-				Color:       0x277ee3,
-				Title:       "Usernames of " + target.Username + "#" + target.Discriminator,
-				Description: out,
-			}
+		embed := &discordgo.MessageEmbed{
+			Color:       0x277ee3,
+			Title:       "Usernames of " + target.Username + "#" + target.Discriminator,
+			Description: out,
+		}
 
-			return embed, nil
-		})
+		return embed, nil
+	}),
 
-		return nil, err
-	},
+	//return nil, nil
 }
+
+//},
+//}
 
 var cmdNicknames = &commands.YAGCommand{
 	CmdCategory: commands.CategoryTool,
@@ -275,14 +293,14 @@ var cmdNicknames = &commands.YAGCommand{
 	},
 	ArgSwitches: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Switch: "d", Name: "Delete all nickname records"},
-		&dcmd.ArgDef{Switch: "s", Name: "Delete all nickname records"},
+		&dcmd.ArgDef{Switch: "s", Name: "Show users status message"},
 	},
 	RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
 		config, err := GetConfig(common.PQ, parsed.Context(), parsed.GS.ID)
 		if err != nil {
 			return nil, err
 		}
-
+		//var embed = &discordgo.MessageEmbed{}
 		target := parsed.Msg.Author
 
 		if parsed.Switches["s"].Value != nil && parsed.Switches["s"].Value.(bool) && parsed.Args[0].Value == nil {
