@@ -865,7 +865,7 @@ func AdvancedDeleteMessages(channelID int64, filterUser int64, regex string, max
 			continue
 		}
 
-		// Check max age
+		// Check min age
 		if minAge != 0 && now.Sub(msgs[i].ParsedCreated) < minAge {
 			continue
 		}
