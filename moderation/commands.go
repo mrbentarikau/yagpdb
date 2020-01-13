@@ -381,7 +381,7 @@ var ModerationCommands = []*commands.YAGCommand{
 			}
 
 			// Check if we have a min age
-			minAge := parsed.Switches["minage"].Value.(time.Duration)
+			minAge := parsed.Switches["minAge"].Value.(time.Duration)
 			if minAge != 0 {
 				filtered = true
 			}
