@@ -694,7 +694,7 @@ body{color:#c1c1c1!important}
 [class="separator"]{background-image:linear-gradient(#1a1a1a 100%,#1a1a1a)!important}
 [class="name"],[class="userbox"]{color:#c3c3c3!important}
 [class*="nav-tabs"]{border:none!important}
-[class="about"],[class="blank"],[class="questions"]{background-color:#1a1a1a!important}
+[class="about"],[class="blank"],[class="questions"],[class*="blank_no_bg"]{background-color:#1a1a1a!important}
 h2[class="about poppins semibold"]{background-color:#1a1a1a!important}
 img[class="img-responsive about aboutlogo"]{background-color:#1a1a1a!important}
 ul[class*="nav-main"]{margin-top:0px!important}
