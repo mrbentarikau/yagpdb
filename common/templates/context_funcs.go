@@ -713,7 +713,7 @@ func (c *Context) tmplGetMember(id interface{}) (*discordgo.Member, error) {
 	return member.DGoCopy(), nil
 }
 
-func (c *Context) tmplGetMemberPresence(target interface{}) (interface{}, error) {
+func (c *Context) tmplGetMemberPresence(target interface{}) (string, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return "", ErrTooManyAPICalls
 	}
@@ -726,16 +726,17 @@ func (c *Context) tmplGetMemberPresence(target interface{}) (interface{}, error)
 	}
 
 	var reply string
+	state := [4]string{"Playing", "Streaming", "Listening", "Watching"}
 	if !member.PresenceSet || member.PresenceGame == nil {
 		reply = fmt.Sprintf("%s", member.Username+" has no active presence or is invisible/offline.")
 	} else {
-		//reply = fmt.Sprintf("%s %s %s %s", member.PresenceGame.Name, member.PresenceGame.URL, member.PresenceGame.Details, member.PresenceGame.State)
-		return member.PresenceGame, nil
-	}
-	/*if reply == "Custom Status" {
-		reply = member.PresenceGame.State
-	}*/
+		if member.PresenceGame.Type == 4 {
+			return fmt.Sprintf("**%s**: %s", member.PresenceGame.Name, member.PresenceGame.State), nil
+		} else {
+			return fmt.Sprintf("**%s**: %s", state[member.PresenceGame.Type], member.PresenceGame.Name), nil
+		}
 
+	}
 	return reply, nil
 }
 
