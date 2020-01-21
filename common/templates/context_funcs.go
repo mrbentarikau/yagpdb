@@ -740,6 +740,23 @@ func (c *Context) tmplGetMemberPresence(target interface{}) (string, error) {
 	return reply, nil
 }
 
+func (c *Context) tmplSetMemberPresence(target interface{}) (interface{}, error) {
+	if c.IncreaseCheckGenericAPICall() {
+		return "", ErrTooManyAPICalls
+	}
+
+	mID := targetUserID(target)
+
+	member, _ := bot.GetMember(c.GS.ID, mID)
+	if member == nil {
+		return "", nil
+	}
+
+	//member.UpdatePresence()
+
+	return nil, nil
+}
+
 func (c *Context) tmplGetChannel(channel interface{}) (*dstate.ChannelState, error) {
 
 	if c.IncreaseCheckGenericAPICall() {
