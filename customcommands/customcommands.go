@@ -65,6 +65,7 @@ const (
 
 var (
 	AllTriggerTypes = []CommandTriggerType{
+		CommandTriggerNone,
 		CommandTriggerCommand,
 		CommandTriggerStartsWith,
 		CommandTriggerContains,
@@ -75,6 +76,7 @@ var (
 	}
 
 	triggerStrings = map[CommandTriggerType]string{
+		CommandTriggerNone:       "None",
 		CommandTriggerCommand:    "Command",
 		CommandTriggerStartsWith: "StartsWith",
 		CommandTriggerContains:   "Contains",

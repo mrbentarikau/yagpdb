@@ -337,6 +337,32 @@ func tmplPow(argX, argY interface{}) float64 {
 	return math.Pow(xySlice[0], xySlice[1])
 }
 
+func tmplLog(arguments ...interface{}) interface{} {
+	var logarithm, base float64
+
+	if len(arguments) < 1 || len(arguments) > 2 {
+		return "Wrong number of arguments"
+	} else if len(arguments) == 1 {
+		base = math.E
+	} else {
+		base = ToFloat64(arguments[1])
+	}
+
+	x := ToFloat64(arguments[0])
+
+	if base == math.E {
+		logarithm = math.Log(x)
+	} else if base == 10 {
+		logarithm = math.Log10(x)
+	} else if base == 2 {
+		logarithm = math.Log2(x)
+	} else {
+		logarithm = math.Log(x) / math.Log(base)
+	}
+
+	return logarithm
+}
+
 func tmplBitwiseAnd(arg1, arg2 int) int {
 	return arg1 & arg2
 

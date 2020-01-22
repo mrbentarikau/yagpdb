@@ -45,6 +45,12 @@ var (
 		HelpEmoji:   "👮",
 		EmbedColor:  0xdb0606,
 	}
+	CategoryAmV = &dcmd.Category{
+		Name:        "Auto-Moderation",
+		Description: "Auto-Moderation commands",
+		HelpEmoji:   "⚙️",
+		EmbedColor:  0xdb8d06,
+	}
 	CategoryFun = &dcmd.Category{
 		Name:        "Fun",
 		Description: "Various commands meant for entertainment",

@@ -21,7 +21,7 @@ func (p *Plugin) AddCommands() {
 	cmdToggleRuleset := &commands.YAGCommand{
 		Name:         "Toggle",
 		Aliases:      []string{"t"},
-		CmdCategory:  commands.CategoryModeration,
+		CmdCategory:  commands.CategoryAmV,
 		RequiredArgs: 1,
 		Arguments: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Name: "ruleset name", Type: dcmd.String},
@@ -56,7 +56,7 @@ func (p *Plugin) AddCommands() {
 	cmdViewRulesets := &commands.YAGCommand{
 		Name:                "Rulesets",
 		Aliases:             []string{"r", "list", "l"},
-		CmdCategory:         commands.CategoryModeration,
+		CmdCategory:         commands.CategoryAmV,
 		Description:         "Lists all rulesets and their status",
 		RequireDiscordPerms: []int64{discordgo.PermissionManageServer, discordgo.PermissionAdministrator, discordgo.PermissionBanMembers},
 		RunFunc: func(data *dcmd.Data) (interface{}, error) {
@@ -88,7 +88,7 @@ func (p *Plugin) AddCommands() {
 	cmdLogs := &commands.YAGCommand{
 		Name:        "Logs",
 		Aliases:     []string{"log"},
-		CmdCategory: commands.CategoryModeration,
+		CmdCategory: commands.CategoryAmV,
 		Description: "Shows the log of the last triggered automod rules, optionally filtering by user",
 		Arguments: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Name: "Page", Type: &dcmd.IntArg{Max: 10000}, Default: 0},
@@ -137,7 +137,7 @@ func (p *Plugin) AddCommands() {
 
 	cmdListVLC := &commands.YAGCommand{
 		CustomEnabled: true,
-		CmdCategory:   commands.CategoryModeration,
+		CmdCategory:   commands.CategoryAmV,
 		Name:          "ListViolationsCount",
 		Description:   "Lists Violations summary in entire server or of specified user optionally filtered by max violation age.\n Specify number of violations to skip while fetching using -skip flag ; max entries fetched 500",
 		Aliases:       []string{"ViolationsCount", "VCount"},
@@ -208,7 +208,7 @@ func (p *Plugin) AddCommands() {
 
 	cmdListV := &commands.YAGCommand{
 		CustomEnabled: true,
-		CmdCategory:   commands.CategoryModeration,
+		CmdCategory:   commands.CategoryAmV,
 		Name:          "ListViolations",
 		Description:   "Lists Violations of specified user \n old flag posts oldest violations in first page ( from oldest to newest ).",
 		Aliases:       []string{"Violations", "ViolationLogs", "VLogs", "VLog"},

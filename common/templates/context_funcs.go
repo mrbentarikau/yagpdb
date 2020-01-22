@@ -713,7 +713,7 @@ func (c *Context) tmplGetMember(id interface{}) (*discordgo.Member, error) {
 	return member.DGoCopy(), nil
 }
 
-func (c *Context) tmplGetMemberPresence(target interface{}) (string, error) {
+func (c *Context) tmplGetMemberStatus(target interface{}) (string, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return "", ErrTooManyAPICalls
 	}
@@ -731,30 +731,13 @@ func (c *Context) tmplGetMemberPresence(target interface{}) (string, error) {
 		reply = fmt.Sprintf("%s", member.Username+" has no active presence or is invisible/offline.")
 	} else {
 		if member.PresenceGame.Type == 4 {
-			return fmt.Sprintf("**%s**: %s", member.PresenceGame.Name, member.PresenceGame.State), nil
+			return fmt.Sprintf("**%s**: %s", member.PresenceGame.Name, member.PresenceGame.State, member.PresenceStatus), nil
 		} else {
 			return fmt.Sprintf("**%s**: %s", state[member.PresenceGame.Type], member.PresenceGame.Name), nil
 		}
 
 	}
 	return reply, nil
-}
-
-func (c *Context) tmplSetMemberPresence(presence string) (string, error) {
-	if c.IncreaseCheckGenericAPICall() {
-		return "", ErrTooManyAPICalls
-	}
-
-	memberID := c.MS.ID
-
-	member, _ := bot.GetMember(c.GS.ID, memberID)
-	if member == nil {
-		return "", nil
-	}
-
-	//member.UpdatePresence()
-
-	return "", nil
 }
 
 func (c *Context) tmplGetChannel(channel interface{}) (*dstate.ChannelState, error) {
