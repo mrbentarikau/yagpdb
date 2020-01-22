@@ -338,7 +338,9 @@ func tmplPow(argX, argY interface{}) float64 {
 }
 
 func tmplLog(arguments ...interface{}) interface{} {
-	var logarithm, base float64
+	var x, base, logarithm float64
+
+	x = ToFloat64(arguments[0])
 
 	if len(arguments) < 1 || len(arguments) > 2 {
 		return "Wrong number of arguments"
@@ -347,10 +349,10 @@ func tmplLog(arguments ...interface{}) interface{} {
 	} else {
 		base = ToFloat64(arguments[1])
 	}
-
-	x := ToFloat64(arguments[0])
-
-	if base == math.E {
+	/*In an exponential function, the base is always defined to be positive, but can't be equal to 1. Because of that x can't be a negative.*/
+	if base == 1 || base <= 0 {
+		logarithm = math.NaN()
+	} else if base == math.E {
 		logarithm = math.Log(x)
 	} else if base == 10 {
 		logarithm = math.Log10(x)
