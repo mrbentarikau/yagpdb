@@ -349,7 +349,8 @@ func tmplLog(arguments ...interface{}) interface{} {
 	} else {
 		base = ToFloat64(arguments[1])
 	}
-	/*In an exponential function, the base is always defined to be positive, but can't be equal to 1. Because of that x can't be a negative.*/
+	/*In an exponential function, the base is always defined to be positive,
+	but it can't be equal to 1. Because of that x can't be a negative.*/
 	if base == 1 || base <= 0 {
 		logarithm = math.NaN()
 	} else if base == math.E {
