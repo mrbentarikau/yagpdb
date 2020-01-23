@@ -707,7 +707,7 @@ func (c *Context) tmplGetMember(target interface{}) (*discordgo.Member, error) {
 	if mID == 0 {
 		return nil, nil
 	}
-	
+
 	member, _ := bot.GetMember(c.GS.ID, mID)
 	if member == nil {
 		return nil, nil
@@ -734,7 +734,7 @@ func (c *Context) tmplGetMemberStatus(target interface{}) (string, error) {
 		reply = fmt.Sprintf("%s", member.Username+" has no active presence or is invisible/offline.")
 	} else {
 		if member.PresenceGame.Type == 4 {
-			return fmt.Sprintf("**%s**: %s", member.PresenceGame.Name, member.PresenceGame.State, member.PresenceStatus), nil
+			return fmt.Sprintf("**%s**: %v%v", member.PresenceGame.Name, member.PresenceGame.State, member.PresenceStatus), nil
 		} else {
 			return fmt.Sprintf("**%s**: %s", state[member.PresenceGame.Type], member.PresenceGame.Name), nil
 		}
