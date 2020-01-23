@@ -2,6 +2,7 @@ package templates
 
 import (
 	"encoding/json"
+	//"fmt"
 	"math"
 	"math/rand"
 	"reflect"
@@ -285,9 +286,9 @@ func tmplDiv(args ...interface{}) interface{} {
 	}
 }
 
-func tmplMod(args ...interface{}) interface{} {
+func tmplMod(args ...interface{}) float64 {
 	if len(args) != 2 {
-		return "Requires two arguments"
+		return math.NaN()
 	}
 
 	return math.Mod(ToFloat64(args[0]), ToFloat64(args[1]))
@@ -337,33 +338,31 @@ func tmplPow(argX, argY interface{}) float64 {
 	return math.Pow(xySlice[0], xySlice[1])
 }
 
-func tmplLog(arguments ...interface{}) interface{} {
+/*log base of x = logarithm; using natural logarithm as default to change base.
+In an exponential function, the base is always defined to be positive,
+but can't be equal to 1. Because of that also x can't be a negative.*/
+func tmplLog(arguments ...interface{}) (float64, error) {
 	var x, base, logarithm float64
 
 	x = ToFloat64(arguments[0])
 
 	if len(arguments) < 1 || len(arguments) > 2 {
-		return "Wrong number of arguments"
+		return 0, errors.New("wrong number of arguments")
 	} else if len(arguments) == 1 {
 		base = math.E
 	} else {
 		base = ToFloat64(arguments[1])
 	}
-	/*In an exponential function, the base is always defined to be positive,
-	but it can't be equal to 1. Because of that x can't be a negative.*/
+
 	if base == 1 || base <= 0 {
 		logarithm = math.NaN()
 	} else if base == math.E {
 		logarithm = math.Log(x)
-	} else if base == 10 {
-		logarithm = math.Log10(x)
-	} else if base == 2 {
-		logarithm = math.Log2(x)
 	} else {
 		logarithm = math.Log(x) / math.Log(base)
 	}
 
-	return logarithm
+	return logarithm, nil
 }
 
 func tmplBitwiseAnd(arg1, arg2 int) int {
