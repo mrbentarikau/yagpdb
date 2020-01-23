@@ -324,7 +324,9 @@ var ModerationCommands = []*commands.YAGCommand{
 		ArgSwitches: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Switch: "r", Name: "Regex", Type: dcmd.String},
 			&dcmd.ArgDef{Switch: "ma", Default: time.Duration(0), Name: "Max age", Type: &commands.DurationArg{}},
-			&dcmd.ArgDef{Switch: "minAge", Default: time.Duration(0), Name: "Min age", Type: &commands.DurationArg{}},
+
+			&dcmd.ArgDef{Switch: "minage", Default: time.Duration(0), Name: "Min age", Type: &commands.DurationArg{}},
+
 			&dcmd.ArgDef{Switch: "i", Name: "Regex case insensitive"},
 			&dcmd.ArgDef{Switch: "nopin", Name: "Ignore pinned messages"},
 		},
@@ -343,8 +345,8 @@ var ModerationCommands = []*commands.YAGCommand{
 			userFilter := parsed.Args[1].Int64()
 
 			num := parsed.Args[0].Int()
-			if userFilter == 0 || userFilter == parsed.Msg.Author.ID {
-				num++ // Automatically include our own message
+			if (userFilter == 0 || userFilter == parsed.Msg.Author.ID) && parsed.Source != 0 {
+				num++ // Automatically include our own message if not triggeded by exec/execAdmin
 			}
 
 			if num > 100 {
@@ -381,7 +383,8 @@ var ModerationCommands = []*commands.YAGCommand{
 			}
 
 			// Check if we have a min age
-			minAge := parsed.Switches["minAge"].Value.(time.Duration)
+
+			minAge := parsed.Switches["minage"].Value.(time.Duration)
 			if minAge != 0 {
 				filtered = true
 			}

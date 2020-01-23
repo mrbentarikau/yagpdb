@@ -35,6 +35,21 @@ func Dictionary(values ...interface{}) (map[interface{}]interface{}, error) {
 }
 
 func StringKeyDictionary(values ...interface{}) (SDict, error) {
+	if len(values) == 1 {
+		switch t := values[0].(type) {
+		case SDict:
+			return t, nil
+		case map[string]interface{}:
+			mapCopy := make(map[string]interface{})
+			for key, value := range t {
+				mapCopy[key] = value
+			}
+			return SDict(mapCopy), nil		
+		default:
+			return nil, errors.New("invalid dict call")		
+		}	
+	}
+	
 	if len(values)%2 != 0 {
 		return nil, errors.New("invalid dict call")
 	}
@@ -52,13 +67,13 @@ func StringKeyDictionary(values ...interface{}) (SDict, error) {
 	return SDict(dict), nil
 }
 
-func CreateSlice(values ...interface{}) ([]interface{}, error) {
+func CreateSlice(values ...interface{}) (Slice, error) {
 	slice := make([]interface{}, len(values))
 	for i := 0; i < len(values); i++ {
 		slice[i] = values[i]
 	}
 
-	return slice, nil
+	return Slice(slice), nil
 }
 
 func CreateEmbed(values ...interface{}) (*discordgo.MessageEmbed, error) {
@@ -417,32 +432,48 @@ func tmplRoundEven(args ...interface{}) float64 {
 	return math.RoundToEven(ToFloat64(args[0]))
 }
 
-func joinStrings(sep string, args ...interface{}) string {
+var ErrStringTooLong = errors.NewPlain("String is too long (max 1MB)")
 
-	out := ""
+const MaxStringLength = 1000000
+
+func joinStrings(sep string, args ...interface{}) (string, error) {
+
+	var builder strings.Builder
 
 	for _, v := range args {
-		switch t := v.(type) {
-		case string:
-			if out != "" {
-				out += sep
-			}
+		if builder.Len() != 0 {
+			builder.WriteString(sep)
+		}
 
-			out += t
+		switch t := v.(type) {
+
+		case string:
+			builder.WriteString(t)
+
 		case []string:
-			for _, s := range t {
-				if out != "" {
-					out += sep
+			for j, s := range t {
+				if j != 0 {
+					builder.WriteString(sep)
 				}
 
-				out += s
+				builder.WriteString(s)
+				if builder.Len() > MaxStringLength {
+					return "", ErrStringTooLong
+				}
 			}
+
 		case int, int32, uint32, int64, uint64:
-			out += ToString(v)
+			builder.WriteString(ToString(v))
+
 		}
+
+		if builder.Len() > MaxStringLength {
+			return "", ErrStringTooLong
+		}
+
 	}
 
-	return out
+	return builder.String(), nil
 }
 
 func sequence(start, stop int) ([]int, error) {

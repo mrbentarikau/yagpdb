@@ -23,7 +23,7 @@ import (
 	"github.com/volatiletech/sqlboiler/queries/qm"
 )
 
-const InTicketPerms = discordgo.PermissionSendMessages | discordgo.PermissionReadMessages
+const InTicketPerms = discordgo.PermissionReadMessageHistory | discordgo.PermissionReadMessages | discordgo.PermissionSendMessages | discordgo.PermissionEmbedLinks | discordgo.PermissionAttachFiles
 
 var _ commands.CommandProvider = (*Plugin)(nil)
 
@@ -51,6 +51,10 @@ func (p *Plugin) AddCommands() {
 				return "Ticket system is disabled in this server, the server admins can enable it in the control panel.", nil
 			}
 
+			if parsed.GS.Channel(true, conf.TicketsChannelCategory) == nil {
+				return "No category for ticket channels set", nil
+			}
+
 			inCurrentTickets, err := models.Tickets(
 				qm.Where("closed_at IS NULL"),
 				qm.Where("guild_id = ?", parsed.GS.ID),
@@ -71,72 +75,8 @@ func (p *Plugin) AddCommands() {
 				return "Title is too long (max 90 characters.) Please shorten it down, you can add more details in the ticket after it has been created", nil
 			}
 
-			// assemble the permission overwrites for the channel were about to create
-			overwrites := []*discordgo.PermissionOverwrite{
-				&discordgo.PermissionOverwrite{
-					Type:  "member",
-					ID:    parsed.Msg.Author.ID,
-					Allow: discordgo.PermissionReadMessages | discordgo.PermissionSendMessages,
-				},
-				&discordgo.PermissionOverwrite{
-					Type: "role",
-					ID:   parsed.GS.ID,
-					Deny: discordgo.PermissionReadMessages | discordgo.PermissionSendMessages,
-				},
-				&discordgo.PermissionOverwrite{
-					Type:  "member",
-					ID:    common.BotUser.ID,
-					Allow: discordgo.PermissionReadMessages | discordgo.PermissionSendMessages,
-				},
-			}
-
-			// add all the mod and admin roles
-		OUTER:
-			for _, v := range conf.ModRoles {
-				for _, po := range overwrites {
-					if po.Type == "role" && po.ID == v {
-						po.Allow |= discordgo.PermissionSendMessages | discordgo.PermissionReadMessages
-						continue OUTER
-					}
-				}
-
-				// not found in existing
-				overwrites = append(overwrites, &discordgo.PermissionOverwrite{
-					Type:  "role",
-					ID:    v,
-					Allow: discordgo.PermissionSendMessages | discordgo.PermissionReadMessages,
-				})
-			}
-
-			// add admin roles
-		OUTER2:
-			for _, v := range conf.AdminRoles {
-				for _, po := range overwrites {
-					if po.Type == "role" && po.ID == v {
-						po.Allow |= discordgo.PermissionSendMessages | discordgo.PermissionReadMessages
-						continue OUTER2
-					}
-				}
-
-				// not found in existing
-				overwrites = append(overwrites, &discordgo.PermissionOverwrite{
-					Type:  "role",
-					ID:    v,
-					Allow: discordgo.PermissionSendMessages | discordgo.PermissionReadMessages,
-				})
-			}
-
-			// generate the ID for this ticket
-			id, err := common.GenLocalIncrID(parsed.GS.ID, "ticket")
-			if err != nil {
-				return nil, err
-			}
-
 			subject := parsed.Args[0].Str()
-			channel, err := common.BotSession.GuildChannelCreateWithOverwrites(parsed.GS.ID, fmt.Sprintf("%d-%s", id, subject), discordgo.ChannelTypeGuildText, conf.TicketsChannelCategory, overwrites)
-			if err != nil {
-				return nil, err
-			}
+			id, channel, err := createTicketChannel(conf, parsed.GS, parsed.Msg.Author.ID, subject)
 
 			// create the db model for it
 			dbModel := &models.Ticket{
@@ -334,7 +274,7 @@ func (p *Plugin) AddCommands() {
 			isAdminsOnly := ticketIsAdminOnly(conf, parsed.CS)
 
 			// create the logs, download the attachments
-			err := createLogs(conf, currentTicket.Ticket, isAdminsOnly)
+			err := createLogs(parsed.GS, conf, currentTicket.Ticket, isAdminsOnly)
 			if err != nil {
 				return nil, err
 			}
@@ -507,7 +447,7 @@ type Ticket struct {
 	Participants []*models.TicketParticipant
 }
 
-func createLogs(conf *models.TicketConfig, ticket *models.Ticket, adminOnly bool) error {
+func createLogs(gs *dstate.GuildState, conf *models.TicketConfig, ticket *models.Ticket, adminOnly bool) error {
 
 	if !conf.TicketsUseTXTTranscripts && !conf.DownloadAttachments {
 		return nil // nothing to do here
@@ -577,7 +517,7 @@ func createLogs(conf *models.TicketConfig, ticket *models.Ticket, adminOnly bool
 		}
 	}
 
-	if conf.TicketsUseTXTTranscripts {
+	if conf.TicketsUseTXTTranscripts && gs.Channel(true, transcriptChannel(conf, adminOnly)) != nil {
 		formattedTranscript := createTXTTranscript(ticket, msgs)
 
 		channel := transcriptChannel(conf, adminOnly)
@@ -588,7 +528,7 @@ func createLogs(conf *models.TicketConfig, ticket *models.Ticket, adminOnly bool
 	}
 
 	// compress and send the attachments
-	if conf.DownloadAttachments {
+	if conf.DownloadAttachments && gs.Channel(true, transcriptChannel(conf, adminOnly)) != nil {
 		archiveAttachments(conf, ticket, attachments, adminOnly)
 	}
 
@@ -713,4 +653,110 @@ func transcriptChannel(conf *models.TicketConfig, adminOnly bool) int64 {
 	}
 
 	return conf.TicketsTranscriptsChannel
+}
+
+func createTicketChannel(conf *models.TicketConfig, gs *dstate.GuildState, authorID int64, subject string) (int64, *discordgo.Channel, error) {
+	// assemble the permission overwrites for the channel were about to create
+	overwrites := []*discordgo.PermissionOverwrite{
+		&discordgo.PermissionOverwrite{
+			Type:  "member",
+			ID:    authorID,
+			Allow: InTicketPerms,
+		},
+		&discordgo.PermissionOverwrite{
+			Type: "role",
+			ID:   gs.ID,
+			Deny: InTicketPerms,
+		},
+		&discordgo.PermissionOverwrite{
+			Type:  "member",
+			ID:    common.BotUser.ID,
+			Allow: InTicketPerms,
+		},
+	}
+
+	// add all the mod and admin roles
+OUTER:
+	for _, v := range conf.ModRoles {
+		for _, po := range overwrites {
+			if po.Type == "role" && po.ID == v {
+				po.Allow |= InTicketPerms
+				continue OUTER
+			}
+		}
+
+		// not found in existing
+		overwrites = append(overwrites, &discordgo.PermissionOverwrite{
+			Type:  "role",
+			ID:    v,
+			Allow: InTicketPerms,
+		})
+	}
+
+	// add admin roles
+OUTER2:
+	for _, v := range conf.AdminRoles {
+		for _, po := range overwrites {
+			if po.Type == "role" && po.ID == v {
+				po.Allow |= InTicketPerms
+				continue OUTER2
+			}
+		}
+
+		// not found in existing
+		overwrites = append(overwrites, &discordgo.PermissionOverwrite{
+			Type:  "role",
+			ID:    v,
+			Allow: InTicketPerms,
+		})
+	}
+
+	// inherit settings from category
+	overwrites = applyChannelParentSettings(gs, conf.TicketsChannelCategory, overwrites)
+
+	// generate the ID for this ticket
+	id, err := common.GenLocalIncrID(gs.ID, "ticket")
+	if err != nil {
+		return 0, nil, err
+	}
+
+	channel, err := common.BotSession.GuildChannelCreateWithOverwrites(gs.ID, fmt.Sprintf("%d-%s", id, subject), discordgo.ChannelTypeGuildText, conf.TicketsChannelCategory, overwrites)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return id, channel, nil
+}
+
+func applyChannelParentSettings(gs *dstate.GuildState, parentCategoryID int64, overwrites []*discordgo.PermissionOverwrite) []*discordgo.PermissionOverwrite {
+	cs := gs.ChannelCopy(true, parentCategoryID)
+	if cs == nil {
+		return overwrites
+	}
+
+	return applyChannelParentSettingsOverwrites(cs.PermissionOverwrites, overwrites)
+}
+
+func applyChannelParentSettingsOverwrites(parentOverwrites []*discordgo.PermissionOverwrite, newChannelOverwrites []*discordgo.PermissionOverwrite) []*discordgo.PermissionOverwrite {
+OUTER:
+	for _, v := range parentOverwrites {
+		for _, nov := range newChannelOverwrites {
+			if nov.Type == v.Type && nov.ID == v.ID {
+
+				nov.Deny |= v.Deny
+				nov.Allow |= v.Allow
+
+				// 0 the overlapping bits on the denies
+				nov.Deny ^= (nov.Deny & nov.Allow)
+
+				continue OUTER
+			}
+		}
+
+		// did not find existing overwrite, make a new one
+		cop := *v
+		newChannelOverwrites = append(newChannelOverwrites, &cop)
+	}
+
+	return newChannelOverwrites
 }

@@ -698,13 +698,16 @@ func (c *Context) tmplGetMessage(channel, msgID interface{}) (*discordgo.Message
 	return message, nil
 }
 
-func (c *Context) tmplGetMember(id interface{}) (*discordgo.Member, error) {
+func (c *Context) tmplGetMember(target interface{}) (*discordgo.Member, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return nil, ErrTooManyAPICalls
 	}
 
-	mID := ToInt64(id)
-
+	mID := targetUserID(target)
+	if mID == 0 {
+		return nil, nil
+	}
+	
 	member, _ := bot.GetMember(c.GS.ID, mID)
 	if member == nil {
 		return nil, nil

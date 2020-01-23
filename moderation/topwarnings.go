@@ -46,7 +46,6 @@ func TopWarns(guildID int64, offset, limit int) ([]*WarnRankEntry, error) {
 			return nil, err
 		}
 
-		userSlice := bot.GetUsers(guildID, userID)
 		/*tmp, err = bot.GetMembers(guildID, userID)
 		if tmp != nil {
 			for _, v := range tmp {
@@ -59,11 +58,13 @@ func TopWarns(guildID int64, offset, limit int) ([]*WarnRankEntry, error) {
 			break
 		}*/
 
+		userSlice := bot.GetUsers(guildID, userID)
 		var username string
 		for _, u := range userSlice {
 			username = fmt.Sprintf("%s", u)
 			break
 		}
+
 		result = append(result, &WarnRankEntry{
 			Rank:      rank,
 			UserID:    userID,

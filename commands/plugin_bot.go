@@ -3,9 +3,11 @@ package commands
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+	"unicode/utf8"
 
 	"emperror.dev/errors"
 	"github.com/jonas747/dcmd"
@@ -84,9 +86,29 @@ func YAGCommandMiddleware(inner dcmd.RunFunc) dcmd.RunFunc {
 			data = data.WithContext(context.WithValue(data.Context(), CtxKeyMS, ms))
 		}
 
+		// Lock the command for execution
+		if !BlockingAddRunningCommand(data.Msg.GuildID, data.Msg.ChannelID, data.Msg.Author.ID, yc, time.Second*60) {
+			if atomic.LoadInt32(shuttingDown) == 1 {
+				return yc.Name + ": Bot is restarting, please try again in a couple seconds...", nil
+			}
+
+			return yc.Name + ": Gave up trying to run command after 60 seconds waiting for your previous instance of this command to finish", nil
+		}
+
+		defer removeRunningCommand(data.Msg.GuildID, data.Msg.ChannelID, data.Msg.Author.ID, yc)
+
 		// Check if the user can execute the command
 		canExecute, resp, settings, err := yc.checkCanExecuteCommand(data, data.CS)
+		if err != nil {
+			yc.Logger(data).WithError(err).Error("An error occured while checking if we could run command")
+		}
+
 		if resp != "" {
+			if resp == ReasonCooldown {
+				cdLeft, _ := yc.LongestCooldownLeft(data.ContainerChain, data.Msg.Author.ID, data.Msg.GuildID)
+				return fmt.Sprintf("This command is on cooldown for another %d seconds", cdLeft), nil
+			}
+
 			// yc.PostCommandExecuted(settings, data, "", errors.WithMessage(err, "checkCanExecuteCommand"))
 			// m, err := common.BotSession.ChannelMessageSend(cState.ID(), resp)
 			// go yc.deleteResponse([]*discordgo.Message{m})
@@ -102,17 +124,6 @@ func YAGCommandMiddleware(inner dcmd.RunFunc) dcmd.RunFunc {
 		}
 
 		data = data.WithContext(context.WithValue(data.Context(), CtxKeyCmdSettings, settings))
-
-		// Lock the command for execution
-		if !BlockingAddRunningCommand(data.Msg.GuildID, data.Msg.ChannelID, data.Msg.Author.ID, yc, time.Second*60) {
-			if atomic.LoadInt32(shuttingDown) == 1 {
-				return yc.Name + ": Bot is shutting down or restarting, please try again in a couple seconds...", nil
-			}
-
-			return yc.Name + ": Gave up trying to run command after 60 seconds waiting for your previous instance of this command to finish", nil
-		}
-
-		defer removeRunningCommand(data.Msg.GuildID, data.Msg.ChannelID, data.Msg.Author.ID, yc)
 
 		err = dcmd.ParseCmdArgs(data)
 		if err != nil {
@@ -223,6 +234,9 @@ func cmdFuncHelp(data *dcmd.Data) (interface{}, error) {
 
 	// Send the targetted help in the channel it was requested in
 	resp = dcmd.GenerateTargettedHelp(target, data, data.ContainerChain[0], &dcmd.StdHelpFormatter{})
+	for _, v := range resp {
+		ensureEmbedLimits(v)
+	}
 
 	if target != "" {
 		if len(resp) != 1 {
@@ -247,7 +261,38 @@ func cmdFuncHelp(data *dcmd.Data) (interface{}, error) {
 		}
 	}
 
+	if data.Source == dcmd.DMSource {
+		return nil, nil
+	}
+
 	return "You've got mail!", nil
+}
+
+func ensureEmbedLimits(embed *discordgo.MessageEmbed) {
+	if utf8.RuneCountInString(embed.Description) < 2000 {
+		return
+	}
+
+	lines := strings.Split(embed.Description, "\n")
+
+	firstField := &discordgo.MessageEmbedField{
+		Name: "Commands",
+	}
+
+	currentField := firstField
+	for _, v := range lines {
+		if utf8.RuneCountInString(currentField.Value)+utf8.RuneCountInString(v) >= 2000 {
+			currentField = &discordgo.MessageEmbedField{
+				Name:  "...",
+				Value: v + "\n",
+			}
+			embed.Fields = append(embed.Fields, currentField)
+		} else {
+			currentField.Value += v + "\n"
+		}
+	}
+
+	embed.Description = firstField.Value
 }
 
 func HandleGuildCreate(evt *eventsystem.EventData) {

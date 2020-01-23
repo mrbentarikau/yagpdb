@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/url"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
@@ -469,4 +470,59 @@ func (d SDict) Get(key string) interface{} {
 func (d SDict) Del(key string) string {
 	delete(d, key)
 	return ""
+}
+
+type Slice []interface{}
+
+func (s Slice) Append(item interface{}) (interface{}, error) {
+	if len(s)+1 > 10000 {
+		return nil, errors.New("resulting slice exceeds slice size limit")
+	}
+
+	switch v := item.(type) {
+	case nil:
+		result := reflect.Append(reflect.ValueOf(&s).Elem(), reflect.Zero(reflect.TypeOf((*interface{})(nil)).Elem()))
+		return result.Interface(), nil
+	default:
+		result := reflect.Append(reflect.ValueOf(&s).Elem(), reflect.ValueOf(v))
+		return result.Interface(), nil
+	}
+
+}
+
+func (s Slice) Set(index int, item interface{}) (string, error) {
+	if index >= len(s) {
+		return "", errors.New("Index out of bounds")
+	}
+
+	s[index] = item
+	return "", nil
+}
+
+func (s Slice) AppendSlice(slice interface{}) (interface{}, error) {
+	val := reflect.ValueOf(slice)
+	switch val.Kind() {
+	case reflect.Slice, reflect.Array:
+	// this is valid
+
+	default:
+		return nil, errors.New("value passed is not an array or slice")
+	}
+
+	if len(s)+val.Len() > 10000 {
+		return nil, errors.New("resulting slice exceeds slice size limit")
+	}
+
+	result := reflect.ValueOf(&s).Elem()
+	for i := 0; i < val.Len(); i++ {
+		switch v := val.Index(i).Interface().(type) {
+		case nil:
+			result = reflect.Append(result, reflect.Zero(reflect.TypeOf((*interface{})(nil)).Elem()))
+
+		default:
+			result = reflect.Append(result, reflect.ValueOf(v))
+		}
+	}
+
+	return result.Interface(), nil
 }

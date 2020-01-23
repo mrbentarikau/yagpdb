@@ -70,14 +70,15 @@ var Command = &commands.YAGCommand{
 	ArgSwitches: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Switch: "channel", Help: "Optional channel to send in", Type: dcmd.Channel},
 	},
-	RunFunc: cmdFuncMentionRole,
+	RunFunc:            cmdFuncMentionRole,
+	GuildScopeCooldown: 10,
 }
 
 func cmdFuncMentionRole(data *dcmd.Data) (interface{}, error) {
 	if ok, err := bot.AdminOrPerm(discordgo.PermissionManageRoles, data.Msg.Author.ID, data.CS.ID); err != nil {
 		return "Failed checking perms", err
 	} else if !ok {
-		return "You need manage server perms to use this command", nil
+		return "You need manage roles perms to use this command", nil
 	}
 
 	roleS := data.Args[0].Str()

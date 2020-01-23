@@ -331,6 +331,18 @@ func setupRoutes() *goji.Mux {
 		}
 	}
 
+	AddSidebarItem(SidebarCategoryCore, &SidebarItem{
+		Name: "Core",
+		URL:  "core",
+		Icon: "fas fa-cog",
+	})
+
+	AddSidebarItem(SidebarCategoryCore, &SidebarItem{
+		Name: "Control panel logs",
+		URL:  "cplogs",
+		Icon: "fas fa-cog",
+	})
+
 	for _, plugin := range common.Plugins {
 		if webPlugin, ok := plugin.(Plugin); ok {
 			webPlugin.InitWeb()
@@ -340,6 +352,8 @@ func setupRoutes() *goji.Mux {
 
 	return RootMux
 }
+
+var StaticFileserverDir = "."
 
 func setupRootMux() {
 	mux := goji.NewMux()
@@ -355,7 +369,7 @@ func setupRootMux() {
 	}
 
 	// Setup fileserver
-	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(".")))
+	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
 	mux.Handle(pat.Get("/robots.txt"), http.HandlerFunc(handleRobotsTXT))
 	mux.Handle(pat.Get("/ads.txt"), http.HandlerFunc(handleAdsTXT))
 
@@ -404,11 +418,14 @@ const (
 	SidebarCategoryFeeds    = "Feeds"
 	SidebarCategoryTools    = "Tools"
 	SidebarCategoryFun      = "Fun"
+	SidebarCategoryCore     = "Core"
 )
 
 type SidebarItem struct {
 	Name string
 	URL  string
+	Icon string
+	New  bool
 }
 
 var sideBarItems = make(map[string][]*SidebarItem)
