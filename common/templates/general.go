@@ -44,12 +44,12 @@ func StringKeyDictionary(values ...interface{}) (SDict, error) {
 			for key, value := range t {
 				mapCopy[key] = value
 			}
-			return SDict(mapCopy), nil		
+			return SDict(mapCopy), nil
 		default:
-			return nil, errors.New("invalid dict call")		
-		}	
+			return nil, errors.New("invalid dict call")
+		}
 	}
-	
+
 	if len(values)%2 != 0 {
 		return nil, errors.New("invalid dict call")
 	}
@@ -353,10 +353,8 @@ func tmplPow(argX, argY interface{}) float64 {
 	return math.Pow(xySlice[0], xySlice[1])
 }
 
-/*tmplLog is a function for templates using
-log base of x = logarithm return; it's using natural logarithm as default to change base.
-In an exponential function, the base is always defined to be positive,
-but can't be equal to 1. Because of that also x can't be a negative.*/
+/*tmplLog is a function for templates using (log base of x = logarithm) as return value.
+It is using natural logarithm as default to change the base.*/
 func tmplLog(arguments ...interface{}) (float64, error) {
 	var x, base, logarithm float64
 
@@ -369,7 +367,8 @@ func tmplLog(arguments ...interface{}) (float64, error) {
 	} else {
 		base = ToFloat64(arguments[1])
 	}
-
+	/*In an exponential function, the base is always defined to be positive,
+	but can't be equal to 1. Because of that also x can't be a negative.*/
 	if base == 1 || base <= 0 {
 		logarithm = math.NaN()
 	} else if base == math.E {
