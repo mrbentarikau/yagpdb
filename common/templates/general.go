@@ -338,7 +338,8 @@ func tmplPow(argX, argY interface{}) float64 {
 	return math.Pow(xySlice[0], xySlice[1])
 }
 
-/*log base of x = logarithm; using natural logarithm as default to change base.
+/*tmplLog is a function for templates using
+log base of x = logarithm return; it's using natural logarithm as default to change base.
 In an exponential function, the base is always defined to be positive,
 but can't be equal to 1. Because of that also x can't be a negative.*/
 func tmplLog(arguments ...interface{}) (float64, error) {
