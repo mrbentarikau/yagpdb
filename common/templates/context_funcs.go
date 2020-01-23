@@ -734,7 +734,7 @@ func (c *Context) tmplGetMemberStatus(target interface{}) (string, error) {
 		reply = fmt.Sprintf("%s", member.Username+" has no active presence or is invisible/offline.")
 	} else {
 		if member.PresenceGame.Type == 4 {
-			return fmt.Sprintf("**%s**: %v%v", member.PresenceGame.Name, member.PresenceGame.State, member.PresenceStatus), nil
+			return fmt.Sprintf("**%s**: %s", member.PresenceGame.Name, member.PresenceGame.State), nil
 		} else {
 			return fmt.Sprintf("**%s**: %s", state[member.PresenceGame.Type], member.PresenceGame.Name), nil
 		}
