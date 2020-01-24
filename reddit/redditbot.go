@@ -70,7 +70,7 @@ func (p *Plugin) StopFeed(wg *sync.WaitGroup) {
 }
 
 func UserAgent() string {
-	return fmt.Sprintf("YAGPDB:%s:%s (by /u/jonas747)", confClientID.GetString(), common.VERSION)
+	return fmt.Sprintf("PAGSTDB:%s:%s (by /u/caubert)", confClientID.GetString(), common.VERSION)
 }
 
 func setupClient() *reddit.Client {
@@ -164,7 +164,7 @@ func (p *PostHandlerImpl) handlePost(post *reddit.Link, filterGuild int64) error
 	for _, item := range filteredItems {
 		idStr := strconv.FormatInt(item.ID, 10)
 
-		webhookUsername := "r/" + post.Subreddit + " • YAGPDB"
+		webhookUsername := "r/" + post.Subreddit + " • PAGSTDB"
 
 		qm := &mqueue.QueuedElement{
 			Guild:           item.GuildID,
