@@ -253,9 +253,8 @@
                                     <!-- Use .btn-add for simplicity and let the page loader adjust. -->
                                     {{range .CC.Responses}}
                                     <div class="entry input-group  input-group-sm">
-                                        <textarea class="form-control response-text-area" name="responses"
-                                            placeholder="Command body here" rows="5"
-                                            oninput="onCCChanged(this)">{{.}}</textarea>
+                                        <textarea id="CC_textbox" class="form-control response-text-area" name="responses"
+                                            placeholder="Command body here" rows="5" oninput="onCCChanged(this)">{{.}}</textarea>
                                         <span class="input-group-append">
                                             <button class="btn btn-success btn-add btn-circle" type="button">
                                                 <i class="fas fa-plus"></i>
@@ -264,7 +263,7 @@
                                     </div>
                                     {{else}}
                                     <div class="entry input-group  input-group-sm">
-                                        <textarea class="form-control response-text-area" name="responses"
+                                        <textarea id="CC_textbox" class="form-control response-text-area" name="responses"
                                             placeholder="Command body here" rows="5" oninput="onCCChanged(this)"></textarea>
                                         <span class="input-group-append">
                                             <button class="btn btn-success btn-add btn-circle" type="button">
@@ -488,6 +487,29 @@
     $(function () {
         triggerTypeChanged();
     })
+
+    $(document).delegate('#CC_textbox', 'keydown', function(e) { 
+    var keyCode = e.keyCode || e.which; 
+    
+        if (keyCode == 9) {
+          e.preventDefault();
+          var start = $(this).get(0).selectionStart;
+          var end = $(this).get(0).selectionEnd;
+    
+          // set textarea value to: text before caret + tab + text after caret
+          $(this).val($(this).val().substring(0, start)
+                      + "\t"
+                      + $(this).val().substring(end));
+    
+      // put caret at right position again
+      $(this).get(0).selectionStart = 
+      $(this).get(0).selectionEnd = start + 1;
+      //document.execCommand("insertText", false, '\t'); // to make undo work
+      onCCChanged(this);
+    } 
+    });
+
+
 
     function onCCChanged(textArea) {
         var textAreas = textArea.parentElement.parentElement.querySelectorAll("textarea")
