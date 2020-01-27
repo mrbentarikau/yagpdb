@@ -37,7 +37,7 @@
 
                             <div class="form-group">
                                 <label>Verify Page content</label>
-                                <textarea rows="5" class="form-control"  name="PageContent" placeholder="{{.DefaultPageContent}}">{{or .PluginSettings.PageContent .DefaultPageContent}}</textarea>
+                                <textarea rows="5" class="form-control tab-textbox"  name="PageContent" placeholder="{{.DefaultPageContent}}">{{or .PluginSettings.PageContent .DefaultPageContent}}</textarea>
                                 <p class="help-block">
                                     The verify page content in markdown format (similar to discord formatting)
                                 </p>
@@ -45,7 +45,7 @@
 
                             <div class="form-group">
                                 <label>Verification DM message (empty for default)</label>
-                                <textarea rows="5" class="form-control"  name="DMMessage" placeholder="">{{or .PluginSettings.DMMessage ""}}</textarea>
+                                <textarea rows="5" class="form-control tab-textbox"  name="DMMessage" placeholder="">{{or .PluginSettings.DMMessage ""}}</textarea>
                                 <p class="help-block">
                                     Available template data:<br/>
                                     {{template "template_helper_user"}} - The user being notified<br/>
@@ -75,7 +75,7 @@
 
                             <div class="form-group">
                                 <label>Notification/Warning message</label>
-                                <textarea rows="5" class="form-control"  name="WarnMessage" placeholder="">{{or .PluginSettings.WarnMessage ""}}</textarea>
+                                <textarea rows="5" class="form-control tab-textbox"  name="WarnMessage" placeholder="">{{or .PluginSettings.WarnMessage ""}}</textarea>
                                 <p class="help-block">
                                     Available template data:<br/>
                                     {{template "template_helper_user"}} - The user being notified<br/>

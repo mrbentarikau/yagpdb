@@ -6,7 +6,7 @@
         max-height: 500px;
         overflow-y: auto;
     }
-    .cc-collapsible {
+    .collapsible {
   color: white;
   cursor: pointer;
   width: 100%;
@@ -17,19 +17,19 @@
 }
 
 
-.cc-collapsible:after {
+.collapsible:after {
   content: '\0076';
-  color: #fff;
+  color: #a1a1a1;
   float: left;
   margin-right: 10px;
 }
 
-.cc-collapsible.active:after {
+.collapsible.active:after {
   content: "\0028C";
   margin-right: 10px;
 }
 
-.csontent {
+.content {
   padding: 0 18px;
   max-height: 0;
   overflow: hidden;
@@ -158,9 +158,9 @@
                 </div>
             </form>
             <h2 class="card-title">
-                <a style="padding:15px 20px 10px 10px!important" data-toggle="collapse" data-parent="#accordion" href="#collapse_cmd{{.LocalID}}" aria-expanded="false" aria-controls="collapse_cmd{{.LocalID}}" class="cc-collapsible">
+                <a style="padding:15px 20px 10px 10px!important" data-toggle="collapse" data-parent="#accordion" href="#collapse_cmd{{.LocalID}}" aria-expanded="false" aria-controls="collapse_cmd{{.LocalID}}" class="collapsible">
 
-                    #{{.LocalID}} - {{index $dot.CCTriggerTypes .TriggerType}}{{if and (ne .TriggerType 10) (ne .TriggerType 5) (ne .TriggerType 6)}}: <span class="cc-text-trigger-span">{{.TextTrigger}}</span>{{else if and (ne .TriggerType 10) (ne .TriggerType 6)}}: <span class="cc-text-interval-span">Every {{call $dot.GetCCInterval .}} {{if eq (call $dot.GetCCIntervalType .) 1}}hour(s)</span>{{else}}minute(s)</span>{{end}} next run: <span class="cc-text-next-run-span">{{.NextRun.Time.UTC.Format "2006-01-02 15:04:05 MST"}}</span>{{end}}
+                    #{{.LocalID}} - {{index $dot.CCTriggerTypes .TriggerType}}{{if and (ne .TriggerType 10) (ne .TriggerType 5) (ne .TriggerType 6)}}: <span class="cc-text-trigger-span">{{.TextTrigger}}</span>{{else if (ne .TriggerType 10) (ne .TriggerType 6)}}: <span class="cc-text-interval-span">Every {{call $dot.GetCCInterval .}} {{if eq (call $dot.GetCCIntervalType .) 1}}hour(s)</span>{{else}}minute(s)</span>{{end}} next run: <span class="cc-text-next-run-span">{{.NextRun.Time.UTC.Format "2006-01-02 15:04:05 MST"}}</span>{{end}}
                 </a>
             </h2>
         </div>
@@ -237,7 +237,7 @@
         hljs.highlightBlock(block);
         hljs.lineNumbersBlock(block);
     });
-    var coll = document.getElementsByClassName("cc-collapsible");
+    var coll = document.getElementsByClassName("collapsible");
     var i;
 
     for (i = 0; i < coll.length; i++) {

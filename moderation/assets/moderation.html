@@ -243,7 +243,7 @@ It is highly recommended to couple the moderation actions with the message logs,
     <div class="col">
         <div class="form-group">
             <label>Mute DM (Leave empty for default)</label>
-            <textarea rows="5" class="form-control"  name="MuteMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.MuteMessage .DefaultDMMessage}}</textarea>
+            <textarea rows="5" class="form-control tab-textbox"  name="MuteMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.MuteMessage .DefaultDMMessage}}</textarea>
             <p class="help-block">
                 Available template data:<br/>
                 {{template "template_helper_user"}} - The user being muted<br/>
@@ -256,7 +256,7 @@ It is highly recommended to couple the moderation actions with the message logs,
         <hr />
         <div class="form-group">
             <label>Unmute DM (Leave empty for default)</label>
-            <textarea rows="5" class="form-control"  name="UnmuteMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.UnmuteMessage .DefaultDMMessage}}</textarea>
+            <textarea rows="5" class="form-control tab-textbox"  name="UnmuteMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.UnmuteMessage .DefaultDMMessage}}</textarea>
             <p class="help-block">
                 Available template data:<br/>
                 {{template "template_helper_user"}} - The user being unmuted<br/>
@@ -312,7 +312,7 @@ It is highly recommended to couple the moderation actions with the message logs,
     <div class="col">
         <div class="form-group">
             <label>Kick DM (Leave empty for default)</label>
-            <textarea rows="5" class="form-control" name="KickMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.KickMessage .DefaultDMMessage}}</textarea>
+            <textarea rows="5" class="form-control tab-textbox" name="KickMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.KickMessage .DefaultDMMessage}}</textarea>
 
             <p class="help-block">Available template data:<br/>
             {{template "template_helper_user"}} - The user being banned/kicked<br/>
@@ -361,7 +361,7 @@ It is highly recommended to couple the moderation actions with the message logs,
     <div class="col">
         <div class="form-group">
             <label>Ban DM (Leave empty for default)</label>
-            <textarea rows="5" class="form-control"  name="BanMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.BanMessage .DefaultDMMessage}}</textarea>
+            <textarea rows="5" class="form-control tab-textbox"  name="BanMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.BanMessage .DefaultDMMessage}}</textarea>
             <p class="help-block">Available template data:<br/>
             {{template "template_helper_user"}} - The user being banned/kicked<br/>
             <code>{{"{{.Reason}}"}}</code> - The reason specified in the ban/kick<br/>
@@ -413,7 +413,7 @@ It is highly recommended to couple the moderation actions with the message logs,
     <div class="col">
         <div class="form-group">
             <label>Warning DM (Leave empty for default)</label>
-            <textarea rows="5" class="form-control"  name="WarnMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.WarnMessage .DefaultDMMessage}}</textarea>
+            <textarea rows="5" class="form-control tab-textbox"  name="WarnMessage" placeholder="{{.DefaultDMMessage}}">{{or .ModConfig.WarnMessage .DefaultDMMessage}}</textarea>
             <p class="help-block">Available template data:<br/>
             {{template "template_helper_user"}} - The user being warned<br/>
             <code>{{"{{.Reason}}"}}</code> - The reason specified in the warning<br/>
