@@ -8,11 +8,10 @@ import (
 	"time"
 
 	"github.com/jonas747/discordgo"
-	"github.com/jonas747/dshardorchestrator/node"
+	"github.com/jonas747/dshardorchestrator/v2/node"
 	"github.com/jonas747/dstate"
 	dshardmanager "github.com/jonas747/jdshardmanager"
 	"github.com/jonas747/retryableredis"
-	"github.com/jonas747/yagpdb/bot/deletequeue"
 	"github.com/jonas747/yagpdb/bot/eventsystem"
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/common/config"
@@ -29,26 +28,18 @@ var (
 
 	NodeConn          *node.Conn
 	UsingOrchestrator bool
-
-	MessageDeleteQueue = deletequeue.NewQueue()
 )
 
 var (
 	confConnEventChannel         = config.RegisterOption("yagpdb.connevt.channel", "Gateway connection logging channel", 0)
 	confConnStatus               = config.RegisterOption("yagpdb.connstatus.channel", "Gateway connection status channel", 0)
 	confShardOrchestratorAddress = config.RegisterOption("yagpdb.orchestrator.address", "Sharding orchestrator address to connect to, if set it will be put into orchstration mode", "")
+	confLargeBotShardingEnabled  = config.RegisterOption("yagpdb.large_bot_sharding", "Set to enable large bot sharding (for 200k+ guilds)", false)
 )
 
 var (
-	// the variables below specify shard orchestrating info received from a shard orchestrator (see cmd/shardorchestrator)
-	// there are unused if were running standalone
-
 	// the total amount of shards this bot is set to use across all processes
 	totalShardCount int
-
-	// The shards running on this process, protected by the processShardsLock muted
-	processShards     []int
-	processShardsLock sync.RWMutex
 )
 
 // Run intializes and starts the discord bot component of yagpdb
@@ -102,11 +93,12 @@ func setupStandalone() {
 
 	EventLogger.init(shardCount)
 	eventsystem.InitWorkers(shardCount)
+	ReadyTracker.initTotalShardCount(totalShardCount)
+
 	go EventLogger.run()
 
-	processShards = make([]int, totalShardCount)
 	for i := 0; i < totalShardCount; i++ {
-		processShards[i] = i
+		ReadyTracker.shardsAdded(i)
 	}
 
 	err = common.RedisPool.Do(retryableredis.FlatCmd(nil, "SET", "yagpdb_total_shards", shardCount))
@@ -195,13 +187,25 @@ func GuildCountsFunc() []int {
 type identifyRatelimiter struct {
 	ch   chan bool
 	once sync.Once
+
+	mu                   sync.Mutex
+	lastShardRatelimited int
+	lastRatelimitAt      time.Time
 }
 
-func (rl *identifyRatelimiter) RatelimitIdentify() {
+func (rl *identifyRatelimiter) RatelimitIdentify(shardID int) {
 	const key = "yagpdb.gateway.identify.limit"
 	for {
+
+		if rl.checkSameBucket(shardID) {
+			return
+		}
+
+		// The ratelimit is 1 identify every 5 seconds, but with exactly that limit we will still encounter invalid session
+		// closes, probably due to small variances in networking and scheduling latencies
+		// Adding a extra 100ms fixes this completely, but to be on the safe side we add a extra 50ms
 		var resp string
-		err := common.RedisPool.Do(retryableredis.Cmd(&resp, "SET", key, "1", "EX", "5", "NX"))
+		err := common.RedisPool.Do(retryableredis.Cmd(&resp, "SET", key, "1", "PX", "5150", "NX"))
 		if err != nil {
 			logger.WithError(err).Error("failed ratelimiting gateway")
 			time.Sleep(time.Second)
@@ -209,12 +213,46 @@ func (rl *identifyRatelimiter) RatelimitIdentify() {
 		}
 
 		if resp == "OK" {
-			return // success
+			// We ackquired the lock, our turn to identify now
+			rl.mu.Lock()
+			rl.lastShardRatelimited = shardID
+			rl.lastRatelimitAt = time.Now()
+			rl.mu.Unlock()
+			return
 		}
 
 		// otherwise a identify was sent by someone else last 5 seconds
 		time.Sleep(time.Second)
 	}
+}
+
+func (rl *identifyRatelimiter) checkSameBucket(shardID int) bool {
+	if !confLargeBotShardingEnabled.GetBool() {
+		// only works with large bot sharding enabled
+		return false
+	}
+
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	if rl.lastRatelimitAt.IsZero() {
+		return false
+	}
+
+	// normally 16, but thats a bit too fast for us, so we use 4
+	currentBucket := shardID / 4
+	lastBucket := rl.lastShardRatelimited / 4
+
+	if currentBucket != lastBucket {
+		return false
+	}
+
+	if time.Since(rl.lastRatelimitAt) > time.Second*5 {
+		return false
+	}
+
+	// same large bot sharding bucket
+	return true
 }
 
 func goroutineLogger() {
@@ -246,7 +284,7 @@ func setupState() {
 	State.ThrowAwayDMMessages = true
 	State.TrackPrivateChannels = false
 	State.CacheExpirey = time.Minute * 10
-	State.RemoveOfflineMembers = true
+	// State.RemoveOfflineMembers = true
 	go State.RunGCWorker()
 
 	eventsystem.DiscordState = State
@@ -270,8 +308,8 @@ func setupState() {
 				common.Statsd.Count("yagpdb.state.cache_hits", deltaHits, nil, 1)
 				common.Statsd.Count("yagpdb.state.cache_misses", deltaMisses, nil, 1)
 
-				common.Statsd.Count("yagpdb.state.last_members_evicted", stats.MembersRemovedLastGC, nil, 1)
-				common.Statsd.Count("yagpdb.state.last_cache_evicted", stats.CacheMisses, nil, 1)
+				common.Statsd.Gauge("yagpdb.state.last_members_evicted", float64(stats.MembersRemovedLastGC), nil, 1)
+				common.Statsd.Gauge("yagpdb.state.last_cache_evicted", float64(stats.CacheMisses), nil, 1)
 			}
 
 			// logger.Debugf("guild cache Hits: %d Misses: %d", deltaHits, deltaMisses)
@@ -330,7 +368,7 @@ func botServiceDetailsF() (details *common.BotServiceDetails, err error) {
 	}
 
 	totalShards := getTotalShards()
-	running := GetProcessShards()
+	running := ReadyTracker.GetProcessShards()
 
 	return &common.BotServiceDetails{
 		TotalShards:      int(totalShards),

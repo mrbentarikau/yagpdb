@@ -408,6 +408,8 @@ func handleDeleteGroup(w http.ResponseWriter, r *http.Request) (web.TemplateData
 
 func triggerTypeFromForm(str string) CommandTriggerType {
 	switch str {
+	case "none":
+		return CommandTriggerNone
 	case "prefix":
 		return CommandTriggerStartsWith
 	case "regex":

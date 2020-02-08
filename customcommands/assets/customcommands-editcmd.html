@@ -253,8 +253,10 @@
                                     <!-- Use .btn-add for simplicity and let the page loader adjust. -->
                                     {{range .CC.Responses}}
                                     <div class="entry input-group  input-group-sm">
+
                                         <textarea id="CC-textbox" class="form-control response-text-area tab-textbox" name="responses"
                                             placeholder="Command body here" rows="5" oninput="onCCChanged(this)">{{.}}</textarea>
+
                                         <span class="input-group-append">
                                             <button class="btn btn-success btn-add btn-circle" type="button">
                                                 <i class="fas fa-plus"></i>
@@ -263,7 +265,10 @@
                                     </div>
                                     {{else}}
                                     <div class="entry input-group  input-group-sm">
+
                                         <textarea id="CC-textbox" class="form-control response-text-area tab-textbox" name="responses"
+
+
                                             placeholder="Command body here" rows="5" oninput="onCCChanged(this)"></textarea>
                                         <span class="input-group-append">
                                             <button class="btn btn-success btn-add btn-circle" type="button">

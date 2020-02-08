@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"sort"
@@ -8,15 +9,15 @@ import (
 	"strings"
 
 	"emperror.dev/errors"
-	"github.com/jonas747/dshardorchestrator/orchestrator/rest"
+	"github.com/jonas747/dshardorchestrator/v2/orchestrator/rest"
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/common/config"
 	"github.com/jonas747/yagpdb/common/internalapi"
 	"github.com/jonas747/yagpdb/web"
 	"goji.io"
 	"goji.io/pat"
-)
-
+) 
+  
 // InitWeb implements web.Plugin
 func (p *Plugin) InitWeb() {
 	web.LoadHTMLTemplate("../../admin/assets/bot_admin_panel.html", "templates/plugins/bot_admin_panel.html")
@@ -48,6 +49,10 @@ func (p *Plugin) InitWeb() {
 	mux.Handle(pat.Post("/host/:host/pid/:pid/updateversion"), web.ControllerPostHandler(p.handleUpgrade, panelHandler, nil, ""))
 	mux.Handle(pat.Post("/host/:host/pid/:pid/migratenodes"), web.ControllerPostHandler(p.handleMigrateNodes, panelHandler, nil, ""))
 	mux.Handle(pat.Get("/host/:host/pid/:pid/deployedversion"), http.HandlerFunc(p.handleLaunchNodeVersion))
+
+	// Node routes
+	mux.Handle(pat.Get("/host/:host/pid/:pid/shard_sessions"), p.ProxyGetInternalAPI("/shard_sessions"))
+	mux.Handle(pat.Post("/host/:host/pid/:pid/shard/:shardid/reconnect"), http.HandlerFunc(p.handleReconnectShard))
 
 	getConfigHandler := web.ControllerHandler(p.handleGetConfig, "bot_admin_config")
 	mux.Handle(pat.Get("/config"), getConfigHandler)
@@ -294,4 +299,49 @@ func (p *Plugin) handleEditConfig(w http.ResponseWriter, r *http.Request) (web.T
 	}
 
 	return tmpl, nil
+}
+
+func (p *Plugin) handleGetShardSessions(w http.ResponseWriter, r *http.Request) {
+	client, err := createOrhcestatorRESTClient(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error querying service hosts: " + err.Error()))
+		return
+	}
+
+	ver, err := client.GetDeployedVersion()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error getting deployed version: " + err.Error()))
+		return
+	}
+
+	w.Write([]byte(ver))
+}
+
+func (p *Plugin) handleReconnectShard(w http.ResponseWriter, r *http.Request) {
+
+	forceReidentify := r.URL.Query().Get("identify") == "1"
+	shardID := pat.Param(r, "shardid")
+
+	sh, err := findServicehost(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error querying service hosts: " + err.Error()))
+		return
+	}
+
+	queryParams := ""
+	if forceReidentify {
+		queryParams = "?reidentify=1"
+	}
+
+	resp, err := http.Post(fmt.Sprintf("http://%s/shard/%s/reconnect%s", sh.InternalAPIAddress, shardID, queryParams), "", nil)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error querying internal api: " + err.Error()))
+		return
+	}
+
+	io.Copy(w, resp.Body)
 }

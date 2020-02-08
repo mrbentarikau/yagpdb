@@ -2,6 +2,7 @@ package templates
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"net/url"
 	"reflect"
@@ -57,10 +58,11 @@ var (
 		"roundEven":  tmplRoundEven,
 
 		// misc
-		"dict":   Dictionary,
-		"sdict":  StringKeyDictionary,
-		"cembed": CreateEmbed,
-		"cslice": CreateSlice,
+		"dict":           Dictionary,
+		"sdict":          StringKeyDictionary,
+		"cembed":         CreateEmbed,
+		"cslice":         CreateSlice,
+		"complexMessage": CreateMessageSend,
 
 		"formatTime":  tmplFormatTime,
 		"json":        tmplJson,
@@ -451,7 +453,7 @@ func MaybeScheduledDeleteMessage(guildID, channelID, messageID int64, delaySecon
 				time.Sleep(time.Duration(delaySeconds) * time.Second)
 			}
 
-			bot.MessageDeleteQueue.DeleteMessages(channelID, messageID)
+			bot.MessageDeleteQueue.DeleteMessages(guildID, channelID, messageID)
 		}()
 	}
 }
@@ -521,8 +523,38 @@ func (s Slice) AppendSlice(slice interface{}) (interface{}, error) {
 
 		default:
 			result = reflect.Append(result, reflect.ValueOf(v))
+
 		}
 	}
 
 	return result.Interface(), nil
+}
+
+func (s Slice) StringSlice(flag ...bool) interface{} {
+	strict := false
+	if len(flag) > 0 {
+		strict = flag[0]
+	}
+
+	StringSlice := make([]string, 0, len(s))
+
+	for _, Sliceval := range s {
+		switch t := Sliceval.(type) {
+		case string:
+			StringSlice = append(StringSlice, t)
+
+		case fmt.Stringer:
+			if strict {
+				return nil
+			}
+			StringSlice = append(StringSlice, t.String())
+
+		default:
+			if strict {
+				return nil
+			}
+		}
+	}
+
+	return StringSlice
 }

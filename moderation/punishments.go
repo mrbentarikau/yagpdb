@@ -55,7 +55,7 @@ func getMemberWithFallback(gs *dstate.GuildState, user *discordgo.User) (ms *dst
 }
 
 // Kick or bans someone, uploading a hasebin log, and sending the report message in the action channel
-func punish(config *Config, p Punishment, guildID, channelID int64, author *discordgo.User, reason string, user *discordgo.User, duration time.Duration, variadicBanDeleteDays ...int) error {
+func punish(config *Config, p Punishment, guildID int64, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, reason string, user *discordgo.User, duration time.Duration, variadicBanDeleteDays ...int) error {
 
 	config, err := getConfigIfNotSet(guildID, config)
 	if err != nil {
@@ -72,9 +72,22 @@ func punish(config *Config, p Punishment, guildID, channelID int64, author *disc
 		}
 	}
 
+	var channelID int64
+	if channel != nil {
+		channelID = channel.ID
+	}
+
 	gs := bot.State.Guild(true, guildID)
 
 	member, memberNotFound := getMemberWithFallback(gs, user)
+
+	if !memberNotFound {
+		msg := config.BanMessage
+		if p == PunishmentKick {
+			msg = config.KickMessage
+		}
+		sendPunishDM(config, msg, action, gs, channel, message, author, member, duration, reason)
+	}
 
 	logLink := ""
 	if channelID != 0 {
@@ -141,18 +154,19 @@ func punish(config *Config, p Punishment, guildID, channelID int64, author *disc
 	return err
 }
 
-func sendPunishDM(config *Config, dmMsg string, action ModlogAction, gs *dstate.GuildState, author *discordgo.User, member *dstate.MemberState, duration time.Duration, reason string) {
+func sendPunishDM(config *Config, dmMsg string, action ModlogAction, gs *dstate.GuildState, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, member *dstate.MemberState, duration time.Duration, reason string) {
 	if dmMsg == "" {
 		dmMsg = DefaultDMMessage
 	}
 
 	// Execute and send the DM message template
-	ctx := templates.NewContext(gs, nil, member)
+	ctx := templates.NewContext(gs, channel, member)
 	ctx.Data["Reason"] = reason
 	ctx.Data["Duration"] = duration
 	ctx.Data["HumanDuration"] = common.HumanizeDuration(common.DurationPrecisionMinutes, duration)
 	ctx.Data["Author"] = author
 	ctx.Data["ModAction"] = action
+	ctx.Data["Message"] = message
 
 	if duration < 1 {
 		ctx.Data["HumanDuration"] = "permanently"
@@ -169,13 +183,13 @@ func sendPunishDM(config *Config, dmMsg string, action ModlogAction, gs *dstate.
 	}
 }
 
-func KickUser(config *Config, guildID, channelID int64, author *discordgo.User, reason string, user *discordgo.User) error {
+func KickUser(config *Config, guildID int64, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, reason string, user *discordgo.User) error {
 	config, err := getConfigIfNotSet(guildID, config)
 	if err != nil {
 		return common.ErrWithCaller(err)
 	}
 
-	err = punish(config, PunishmentKick, guildID, channelID, author, reason, user, 0)
+	err = punish(config, PunishmentKick, guildID, channel, message, author, reason, user, 0)
 	if err != nil {
 		return err
 	}
@@ -184,8 +198,8 @@ func KickUser(config *Config, guildID, channelID int64, author *discordgo.User, 
 		return nil
 	}
 
-	if channelID != 0 {
-		_, err = DeleteMessages(channelID, user.ID, 100, 100)
+	if channel != nil {
+		_, err = DeleteMessages(channel.ID, user.ID, 100, 100)
 	}
 	return err
 }
@@ -229,7 +243,7 @@ func DeleteMessages(channelID int64, filterUser int64, deleteNum, fetchNum int) 
 	return len(toDelete), err
 }
 
-func BanUserWithDuration(config *Config, guildID, channelID int64, author *discordgo.User, reason string, user *discordgo.User, duration time.Duration, deleteMessageDays int) error {
+func BanUserWithDuration(config *Config, guildID int64, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, reason string, user *discordgo.User, duration time.Duration, deleteMessageDays int) error {
 	// Set a key in redis that marks that this user has appeared in the modlog already
 	common.RedisPool.Do(retryableredis.Cmd(nil, "SETEX", RedisKeyBannedUser(guildID, user.ID), "60", "1"))
 	if deleteMessageDays > 7 {
@@ -239,7 +253,8 @@ func BanUserWithDuration(config *Config, guildID, channelID int64, author *disco
 		deleteMessageDays = 0
 	}
 
-	err := punish(config, PunishmentBan, guildID, channelID, author, reason, user, duration, deleteMessageDays)
+	err := punish(config, PunishmentBan, guildID, channel, message, author, reason, user, duration, deleteMessageDays)
+
 	if err != nil {
 		return err
 	}
@@ -259,8 +274,8 @@ func BanUserWithDuration(config *Config, guildID, channelID int64, author *disco
 	return nil
 }
 
-func BanUser(config *Config, guildID, channelID int64, author *discordgo.User, reason string, user *discordgo.User) error {
-	return BanUserWithDuration(config, guildID, channelID, author, reason, user, 0, 1)
+func BanUser(config *Config, guildID int64, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, reason string, user *discordgo.User) error {
+	return BanUserWithDuration(config, guildID, channel, message, author, reason, user, 0, 1)
 }
 
 const (
@@ -269,7 +284,7 @@ const (
 
 // Unmut or mute a user, ignore duration if unmuting
 // TODO: i don't think we need to track mutes in its own database anymore now with the new scheduled event system
-func MuteUnmuteUser(config *Config, mute bool, guildID, channelID int64, author *discordgo.User, reason string, member *dstate.MemberState, duration int) error {
+func MuteUnmuteUser(config *Config, mute bool, guildID int64, channel *dstate.ChannelState, message *discordgo.Message, author *discordgo.User, reason string, member *dstate.MemberState, duration int) error {
 	config, err := getConfigIfNotSet(guildID, config)
 	if err != nil {
 		return common.ErrWithCaller(err)
@@ -277,6 +292,11 @@ func MuteUnmuteUser(config *Config, mute bool, guildID, channelID int64, author 
 
 	if config.MuteRole == "" {
 		return ErrNoMuteRole
+	}
+
+	var channelID int64
+	if channel != nil {
+		channelID = channel.ID
 	}
 
 	// To avoid unexpected things from happening, make sure were only updating the mute of the player 1 place at a time
@@ -377,7 +397,7 @@ func MuteUnmuteUser(config *Config, mute bool, guildID, channelID int64, author 
 
 	gs := bot.State.Guild(true, guildID)
 	if gs != nil {
-		sendPunishDM(config, dmMsg, action, gs, author, member, time.Duration(duration)*time.Minute, reason)
+		sendPunishDM(config, dmMsg, action, gs, channel, message, author, member, time.Duration(duration)*time.Minute, reason)
 	}
 
 	// Create the modlog entry
@@ -438,7 +458,7 @@ func RemoveMemberMuteRole(config *Config, id int64, currentRoles []int64, mute M
 	return
 }
 
-func WarnUser(config *Config, guildID, channelID int64, author *discordgo.User, target *discordgo.User, message string) error {
+func WarnUser(config *Config, guildID int64, channel *dstate.ChannelState, msg *discordgo.Message, author *discordgo.User, target *discordgo.User, message string) error {
 	warning := &WarningModel{
 		GuildID:               guildID,
 		UserID:                discordgo.StrID(target.ID),
@@ -446,6 +466,11 @@ func WarnUser(config *Config, guildID, channelID int64, author *discordgo.User, 
 		AuthorUsernameDiscrim: author.Username + "#" + author.Discriminator,
 
 		Message: message,
+	}
+
+	var channelID int64
+	if channel != nil {
+		channelID = channel.ID
 	}
 
 	config, err := getConfigIfNotSet(guildID, config)
@@ -466,7 +491,7 @@ func WarnUser(config *Config, guildID, channelID int64, author *discordgo.User, 
 	gs := bot.State.Guild(true, guildID)
 	ms, _ := bot.GetMember(guildID, target.ID)
 	if gs != nil && ms != nil {
-		sendPunishDM(config, config.WarnMessage, MAWarned, gs, author, ms, -1, message)
+		sendPunishDM(config, config.WarnMessage, MAWarned, gs, channel, msg, author, ms, -1, message)
 	}
 
 	// go bot.SendDM(target.ID, fmt.Sprintf("**%s**: You have been warned for: %s", bot.GuildName(guildID), message))
