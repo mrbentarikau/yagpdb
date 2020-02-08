@@ -78,7 +78,6 @@ func (p *Plugin) InitWeb() {
 	newCommandHandler := web.ControllerPostHandler(handleNewCommand, nil, nil, "Created a new custom command")
 	subMux.Handle(pat.Post("/commands/new"), newCommandHandler)
 	subMux.Handle(pat.Post("/commands/:cmd/update"), web.ControllerPostHandler(handleUpdateCommand, getHandler, CustomCommand{}, "Updated a custom command"))
-	//subMux.Handle(pat.Post("/commands/:cmd/edit"), web.ControllerPostHandler(handleEditCommand, getHandler, nil, "Edited a custom command"))
 	subMux.Handle(pat.Post("/commands/:cmd/delete"), web.ControllerPostHandler(handleDeleteCommand, getHandler, nil, "Deleted a custom command"))
 
 	subMux.Handle(pat.Post("/creategroup"), web.ControllerPostHandler(handleNewGroup, getHandler, GroupForm{}, "Created a new custom command group"))
@@ -211,7 +210,7 @@ func handleNewCommand(w http.ResponseWriter, r *http.Request) (web.TemplateData,
 		TimeTriggerExcludingDays:  []int64{},
 		TimeTriggerExcludingHours: []int64{},
 
-		Responses: []string{"{{/*Edit this to change the output of the command!*/}}"},
+		Responses: []string{"Edit this to change the output of the command!"},
 	}
 
 	if groupID != 0 {
@@ -424,8 +423,6 @@ func triggerTypeFromForm(str string) CommandTriggerType {
 		return CommandTriggerReaction
 	case "interval_minutes", "interval_hours":
 		return CommandTriggerInterval
-	case "none":
-		return CommandTriggerNone
 	default:
 		return CommandTriggerCommand
 

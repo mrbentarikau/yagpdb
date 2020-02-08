@@ -12,7 +12,7 @@ import (
 	"github.com/jonas747/yagpdb/commands"
 )
 
-type Xkcd struct {
+type Hltb struct {
 	Month      string
 	Num        int64
 	Link       string
@@ -31,13 +31,14 @@ var XkcdJson = "info.0.json"
 
 var Command = &commands.YAGCommand{
 	CmdCategory: commands.CategoryFun,
-	Name:        "Xkcd",
+	Name:			"HowLongToBeat",
+	Alias:			"hltb"
 	Description: "An xkcd comic, by default returns random comic strip",
 	Arguments: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Name: "Comic number", Type: dcmd.Int},
 	},
 	ArgSwitches: []*dcmd.ArgDef{
-		&dcmd.ArgDef{Switch: "l", Name: "Latest comic"},
+		&dcmd.ArgDef{Switch: "noembed", Name: "Latest comic"},
 	},
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
 

@@ -11,8 +11,6 @@ var keyCode = e.keyCode || e.which;
       var end = $(this).get(0).selectionEnd;
 
 
-      // caret replacement
-
       $(this).val($(this).val().substring(0, start)
                   + "\t"
                   + $(this).val().substring(end));

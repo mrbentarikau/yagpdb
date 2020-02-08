@@ -3,8 +3,8 @@ package moderation
 import (
 	"context"
 	"strconv"
-	"strings"
 	"time"
+	"strings"
 
 	"emperror.dev/errors"
 	"github.com/jinzhu/gorm"
@@ -61,7 +61,7 @@ func punish(config *Config, p Punishment, guildID int64, channel *dstate.Channel
 	if err != nil {
 		return common.ErrWithCaller(err)
 	}
-
+	
 	var action ModlogAction
 	if p == PunishmentKick {
 		action = MAKick
@@ -71,7 +71,7 @@ func punish(config *Config, p Punishment, guildID int64, channel *dstate.Channel
 			action.Footer = "Expires after: " + common.HumanizeDuration(common.DurationPrecisionMinutes, duration)
 		}
 	}
-
+	
 	var channelID int64
 	if channel != nil {
 		channelID = channel.ID
@@ -80,7 +80,6 @@ func punish(config *Config, p Punishment, guildID int64, channel *dstate.Channel
 	gs := bot.State.Guild(true, guildID)
 
 	member, memberNotFound := getMemberWithFallback(gs, user)
-
 	if !memberNotFound {
 		msg := config.BanMessage
 		if p == PunishmentKick {
@@ -112,12 +111,6 @@ func punish(config *Config, p Punishment, guildID int64, channel *dstate.Channel
 
 	if err != nil {
 		return err
-	} else if !memberNotFound {
-		msg := config.BanMessage
-		if p == PunishmentKick {
-			msg = config.KickMessage
-		}
-		sendPunishDM(config, msg, action, gs, author, member, duration, reason)
 	}
 
 	logger.Infof("MODERATION: %s %s %s cause %q", author.Username, action.Prefix, user.Username, reason)
@@ -252,9 +245,8 @@ func BanUserWithDuration(config *Config, guildID int64, channel *dstate.ChannelS
 	if deleteMessageDays < 0 {
 		deleteMessageDays = 0
 	}
-
+	
 	err := punish(config, PunishmentBan, guildID, channel, message, author, reason, user, duration, deleteMessageDays)
-
 	if err != nil {
 		return err
 	}
@@ -293,7 +285,7 @@ func MuteUnmuteUser(config *Config, mute bool, guildID int64, channel *dstate.Ch
 	if config.MuteRole == "" {
 		return ErrNoMuteRole
 	}
-
+	
 	var channelID int64
 	if channel != nil {
 		channelID = channel.ID
@@ -472,7 +464,7 @@ func WarnUser(config *Config, guildID int64, channel *dstate.ChannelState, msg *
 	if channel != nil {
 		channelID = channel.ID
 	}
-
+	
 	config, err := getConfigIfNotSet(guildID, config)
 	if err != nil {
 		return common.ErrWithCaller(err)
