@@ -619,7 +619,6 @@ func (c *Context) tmplDelMessageReaction(values ...reflect.Value) (reflect.Value
 	if c.IncreaseCheckCallCounter("user_deletes_reaction_messages", 1) {
 		return reflect.Value{}, ErrTooManyCalls
 	}
-
 	f := func(args []reflect.Value) (reflect.Value, error) {
 		if len(args) < 3 {
 			return reflect.Value{}, errors.New("Not enough arguments (need channelID, messageID, userID)")
