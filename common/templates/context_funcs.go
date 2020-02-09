@@ -119,12 +119,12 @@ func (c *Context) tmplSendMessage(filterSpecialMentions bool, returnID bool) fun
 
 		switch typedMsg := msg.(type) {
 
-			case *discordgo.MessageEmbed:
-				msgSend.Embed = typedMsg
-			case *discordgo.MessageSend:
-				msgSend = typedMsg
-			default:
-				msgSend.Content = fmt.Sprint(msg)
+		case *discordgo.MessageEmbed:
+			msgSend.Embed = typedMsg
+		case *discordgo.MessageSend:
+			msgSend = typedMsg
+		default:
+			msgSend.Content = fmt.Sprint(msg)
 		}
 
 		if filterSpecialMentions && msgSend.Content != "" {
@@ -132,7 +132,6 @@ func (c *Context) tmplSendMessage(filterSpecialMentions bool, returnID bool) fun
 		}
 
 		m, err = common.BotSession.ChannelMessageSendComplex(cid, msgSend)
-		
 
 		if err == nil && returnID {
 			return m.ID
@@ -616,25 +615,11 @@ func (c *Context) tmplDelMessage(channel, msgID interface{}, args ...interface{}
 	return ""
 }
 
-/*func (c *Context) tmplDelMessageReaction(channel, msgID, userID interface{}, react reflect.Value) (string, error) {
-	if c.IncreaseCheckGenericAPICall() {
-		return "", ErrTooManyAPICalls
-	}
-
-	cID := c.ChannelArg(channel)
-	if cID == 0 {
-		return "", nil
-	}
-
-	mID := ToInt64(msgID)
-	uID := targetUserID(userID)
-
-	common.BotSession.MessageReactionRemove(cID, mID, react.String(), uID)
-
-	return "", nil
-}*/
-
 func (c *Context) tmplDelMessageReaction(values ...reflect.Value) (reflect.Value, error) {
+	if c.IncreaseCheckCallCounter("delete_reaction_message_user", 1) {
+		return reflect.Value{}, ErrTooManyCalls
+	}
+
 	f := func(args []reflect.Value) (reflect.Value, error) {
 		if len(args) < 3 {
 			return reflect.Value{}, errors.New("Not enough arguments (need channelID, messageID, userID)")
