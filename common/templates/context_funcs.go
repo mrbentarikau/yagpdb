@@ -616,7 +616,7 @@ func (c *Context) tmplDelMessage(channel, msgID interface{}, args ...interface{}
 }
 
 func (c *Context) tmplDelMessageReaction(values ...reflect.Value) (reflect.Value, error) {
-	if c.IncreaseCheckCallCounter("delete_reaction_message_user", 1) {
+	if c.IncreaseCheckCallCounter("usered_deletes_reaction_message", 1) {
 		return reflect.Value{}, ErrTooManyCalls
 	}
 
