@@ -80,27 +80,10 @@
             <div class="col col-md-10">
               <h1 class="brand-heading bold intro_head">
                 <br/>PAGSTDB</h1>
-              <p class="intro_headline">People Against Generally Shitty Things Discord Bot</p>
-            </div>
-          </div>
-          {{if ne .DemoServerID "0"}}<div class="row justify-content-md-center">
-            <div class="col col-md-10">
-              <p class="intro-text poppins"><a href="/manage/{{.DemoServerID}}/home">Click here for a live demo of the control panel</a></p>
-            </div>
-          </div>{{end}}
-          <div class="row justify-content-md-center">
-            <div class="col col-md-5">
-              <div class="numberbutton">
-                <img src="/static/img/button.png" alt="" class="btn_img">
-                <p class="intro-text poppins bold numbercentered">Joined Servers
-                  <br> {{.JoinedServers}}</p>
-              </div>
-            </div>
-            <div class="col col-md-5">
-              <div class="numberbutton">
-                <img src="/static/img/button.png" alt="" class="btn_img">
-                <p class="intro-text poppins bold numbercentered">Commands ran today
-                  <br> {{.Commands}}</p>
+                <div style="background-color: rgba(26,26,26,0.5);">
+                  <p style="margin-bottom: 0px" class="intro_headline">People Against Generally Shitty Things Discord Bot</p>
+                  <span style="text-align: left;display:block; margin-left:27px;margin-top: 0px;margin-bottom: 0px">>> Joined Servers: {{.JoinedServers}}</span>
+                  <span style="text-align: left;display:block; margin-left:27px;margin-top: 0px;margin-bottom: 0px">>> Commands ran today: {{.Commands}}</span>
               </div>
             </div>
           </div>
