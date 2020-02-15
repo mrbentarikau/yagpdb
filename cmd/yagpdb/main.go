@@ -39,6 +39,7 @@ import (
 	"github.com/jonas747/yagpdb/twitter"
 	"github.com/jonas747/yagpdb/verification"
 	"github.com/jonas747/yagpdb/youtube"
+	"github.com/jonas747/yageconomy"
 	// External plugins
 )
 
@@ -81,6 +82,7 @@ func main() {
 	timezonecompanion.RegisterPlugin()
 	admin.RegisterPlugin()
 	internalapi.RegisterPlugin()
+	yageconomy.RegisterPlugin()
 
 	run.Run()
 }
