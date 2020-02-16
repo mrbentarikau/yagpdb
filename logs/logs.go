@@ -271,6 +271,7 @@ func GetNicknames(ctx context.Context, userID, guildID int64, limit, offset int)
 		qm.Offset(offset)).AllG(ctx)
 }
 
+//DeleteNicknames deletes users' nicks from current server
 func DeleteNicknames(ctx context.Context, guildID, userID int64, nickname string) (int64, error) {
 	dbQueryForID, err := models.NicknameListings(qm.Select("id"), qm.Where("guild_id = ? AND user_id = ?",
 		guildID, userID), qm.OrderBy("id DESC")).One(context.Background(), common.PQ)

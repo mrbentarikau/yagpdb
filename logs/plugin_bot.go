@@ -111,6 +111,19 @@ var cmdWhois = &commands.YAGCommand{
 		if createdDurStr == "" {
 			createdDurStr = "Less than an hour ago"
 		}
+
+		var memberStatus string
+		state := [4]string{"Playing", "Streaming", "Listening", "Watching"}
+		if !member.PresenceSet || member.PresenceGame == nil {
+			memberStatus = fmt.Sprintf("Has no active status or is invisible/offline.")
+		} else {
+			if member.PresenceGame.Type == 4 {
+				memberStatus = fmt.Sprintf("%s: %s", member.PresenceGame.Name, member.PresenceGame.State)
+			} else {
+				memberStatus = fmt.Sprintf("%s: %s", state[member.PresenceGame.Type], member.PresenceGame.Name)
+			}
+		}
+
 		embed := &discordgo.MessageEmbed{
 			Title: fmt.Sprintf("%s#%04d%s", member.Username, member.Discriminator, nick),
 			Fields: []*discordgo.MessageEmbedField{
@@ -141,6 +154,11 @@ var cmdWhois = &commands.YAGCommand{
 				}, &discordgo.MessageEmbedField{
 					Name:   "Join Server Age",
 					Value:  joinedAtDurStr,
+					Inline: true,
+				},
+				&discordgo.MessageEmbedField{
+					Name:   "Status",
+					Value:  memberStatus,
 					Inline: true,
 				},
 			},
@@ -293,7 +311,6 @@ var cmdNicknames = &commands.YAGCommand{
 	},
 	ArgSwitches: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Switch: "d", Name: "Delete all nickname records"},
-		&dcmd.ArgDef{Switch: "s", Name: "Show users status message"},
 	},
 	RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
 		config, err := GetConfig(common.PQ, parsed.Context(), parsed.GS.ID)
@@ -302,10 +319,6 @@ var cmdNicknames = &commands.YAGCommand{
 		}
 		//var embed = &discordgo.MessageEmbed{}
 		target := parsed.Msg.Author
-
-		if parsed.Switches["s"].Value != nil && parsed.Switches["s"].Value.(bool) && parsed.Args[0].Value == nil {
-			return fmt.Sprintf("%v", (commands.ContextMS(parsed.Context())).PresenceGame.State), nil
-		}
 
 		if parsed.Switches["d"].Value != nil && parsed.Switches["d"].Value.(bool) && parsed.Args[0].Value == nil {
 			memberNick := (commands.ContextMS(parsed.Context())).Nick
