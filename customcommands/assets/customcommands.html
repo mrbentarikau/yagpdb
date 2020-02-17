@@ -6,6 +6,7 @@
         max-height: 500px;
         overflow-y: auto;
     }
+<<<<<<< HEAD
     .cc-collapsible {
   color: white;
   cursor: pointer;
@@ -36,6 +37,21 @@
   transition: max-height 0.2s ease-out;
   background-color: #f1f1f1;
 }
+=======
+    .cc-collapsibleDown:before{
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: "\f107";
+        margin-right: 10px;
+    }
+    
+    .cc-collapsibleUp:before{
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: '\f106';
+        margin-right: 10px;
+    }
+>>>>>>> db811b670b600a486addb314312bde13cf990012
 </style>
 
 <header class="page-header">
@@ -158,9 +174,13 @@
                 </div>
             </form>
             <h2 class="card-title">
+<<<<<<< HEAD
 
                 <a style="padding:15px 20px 10px 10px!important" data-toggle="collapse" data-parent="#accordion" href="#collapse_cmd{{.LocalID}}" aria-expanded="false" aria-controls="collapse_cmd{{.LocalID}}" class="cc-collapsible">
 
+=======
+                <a style="padding:15px 20px 10px 20px!important" data-toggle="collapse" data-parent="#accordion" href="#collapse_cmd{{.LocalID}}" aria-expanded="false" aria-controls="collapse_cmd{{.LocalID}}" class="cc-collapsibleDown">
+>>>>>>> db811b670b600a486addb314312bde13cf990012
                     #{{.LocalID}} - {{index $dot.CCTriggerTypes .TriggerType}}{{if and (ne .TriggerType 10) (ne .TriggerType 5) (ne .TriggerType 6)}}: <span class="cc-text-trigger-span">{{.TextTrigger}}</span>{{else if and (ne .TriggerType 10) (ne .TriggerType 6)}}: <span class="cc-text-interval-span">Every {{call $dot.GetCCInterval .}} {{if eq (call $dot.GetCCIntervalType .) 1}}hour(s)</span>{{else}}minute(s)</span>{{end}} next run: <span class="cc-text-next-run-span">{{.NextRun.Time.UTC.Format "2006-01-02 15:04:05 MST"}}</span>{{end}}
                 </a>
             </h2>
@@ -238,20 +258,11 @@
         hljs.highlightBlock(block);
         hljs.lineNumbersBlock(block);
     });
-    var coll = document.getElementsByClassName("cc-collapsible");
-    var i;
 
-    for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        } 
-  });
-}
+    $('.collapse').on('shown.bs.collapse', function(){
+    $(this).parent().find('.cc-collapsibleDown').removeClass('cc-collapsibleDown').addClass('cc-collapsibleUp');}).on('hidden.bs.collapse',function(){
+        $(this).parent().find('.cc-collapsibleUp').removeClass('cc-collapsibleUp').addClass('cc-collapsibleDown');});
+    
 </script>
 {{template "cp_footer" .}}
 

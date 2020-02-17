@@ -457,6 +457,27 @@ func tmplLog(arguments ...interface{}) (float64, error) {
 func tmplBitwiseAnd(arg1, arg2 int) int {
 	return arg1 & arg2
 
+//tmplHumanizeThousands comma separates thousands
+func tmplHumanizeThousands(input interface{}) string{
+	var f1,f2 string
+
+	i := tmplToInt(input)
+	str := strconv.Itoa(i)
+	
+	idx := 0
+	for i = len(str) -1; i >= 0; i-- {
+		idx++
+		if idx == 4{
+			idx = 1
+			f1 = f1 + ","
+		}
+		f1=f1+string(str[i])
+	}
+
+	for i=len(f1)-1;i>=0;i--{
+		f2=f2+string(f1[i])
+	}
+	return f2
 }
 
 func roleIsAbove(a, b *discordgo.Role) bool {

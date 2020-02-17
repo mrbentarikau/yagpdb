@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jonas747/dstate"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jonas747/dstate"
 
 	"github.com/jonas747/yagpdb/common/scheduledevents2"
 
@@ -615,13 +616,16 @@ func (c *Context) tmplDelMessage(channel, msgID interface{}, args ...interface{}
 	return ""
 }
 
+//Deletes reactions from a message either via reaction trigger or argument-set of emojis,
+//needs channelID, messageID, userID, list of emojis - up to twenty
+//can be run once per CC.
 func (c *Context) tmplDelMessageReaction(values ...reflect.Value) (reflect.Value, error) {
 	if c.IncreaseCheckCallCounter("user_deletes_reaction_messages", 1) {
 		return reflect.Value{}, ErrTooManyCalls
 	}
 	f := func(args []reflect.Value) (reflect.Value, error) {
-		if len(args) < 3 {
-			return reflect.Value{}, errors.New("Not enough arguments (need channelID, messageID, userID)")
+		if len(args) < 4 {
+			return reflect.Value{}, errors.New("Not enough arguments (need channelID, messageID, userID, emoji)")
 		}
 
 		var cArg interface{}
@@ -631,18 +635,15 @@ func (c *Context) tmplDelMessageReaction(values ...reflect.Value) (reflect.Value
 
 		cID := c.ChannelArg(cArg)
 		if cID == 0 {
-			return reflect.ValueOf(""), nil
+			return reflect.ValueOf("non-existing channel"), nil
 		}
 
 		mID := ToInt64(args[1].Interface())
 		uID := targetUserID(args[2].Interface())
 
-		for i, reaction := range args {
-			if i < 3 {
-				continue
-			}
+		for _, reaction := range args[3:] {
 
-			if c.IncreaseCheckCallCounter("del_reaction_message", 20) {
+			if c.IncreaseCheckCallCounter("del_reaction_message", 10) {
 				return reflect.Value{}, ErrTooManyCalls
 			}
 

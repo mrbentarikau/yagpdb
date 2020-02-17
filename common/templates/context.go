@@ -56,6 +56,7 @@ var (
 		"roundCeil":  tmplRoundCeil,
 		"roundFloor": tmplRoundFloor,
 		"roundEven":  tmplRoundEven,
+		"humanizeThousands": tmplHumanizeThousands,
 
 		// misc
 		"dict":           Dictionary,
@@ -70,6 +71,7 @@ var (
 		"inFold":      inFold,
 		"roleAbove":   roleIsAbove,
 		"adjective":   common.RandomAdjective,
+		"noun":        common.RandomNoun,
 		"randInt":     randInt,
 		"shuffle":     shuffle,
 		"seq":         sequence,

@@ -84,6 +84,7 @@ func init() {
 		"mTemplate":        mTemplate,
 		"hasPerm":          hasPerm,
 		"formatTime":       prettyTime,
+		"checkbox":         tmplCheckbox,
 		"roleOptions":      tmplRoleDropdown,
 		"roleOptionsMulti": tmplRoleDropdownMutli,
 
@@ -340,7 +341,7 @@ func setupRoutes() *goji.Mux {
 	AddSidebarItem(SidebarCategoryCore, &SidebarItem{
 		Name: "Control panel logs",
 		URL:  "cplogs",
-		Icon: "fas fa-cog",
+		Icon: "fas fa-database",
 	})
 
 	for _, plugin := range common.Plugins {
