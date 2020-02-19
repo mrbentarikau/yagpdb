@@ -174,7 +174,7 @@ OUTER:
 		return
 	}
 
-	webhookUsername := t.User.ScreenName + " • PAGSTBSD"
+	webhookUsername := t.User.ScreenName + " • PAGSTDB"
 	embed := createTweetEmbed(t)
 	for _, v := range relevantFeeds {
 		mqueue.QueueMessage(&mqueue.QueuedElement{
