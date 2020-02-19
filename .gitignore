@@ -12,8 +12,8 @@ cmd/yagpdb/soundboard
 cmd/yagpdb/shutdown_logs
 cmd/yagpdb/safebrowsing_db
 cmd/yagpdb/static/video/*
-cmd/yagpdb/static/icons
-cmd/yagpdb/static/img
+cmd/yagpdb/static/icons/
+cmd/yagpdb/static/img/
 
 # We don't want filthy pre-configured config files here ! >:O
 # The graw agent file
