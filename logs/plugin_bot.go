@@ -83,10 +83,8 @@ var cmdWhois = &commands.YAGCommand{
 
 		member := commands.ContextMS(parsed.Context())
 		member, _ = bot.GetMember(member.Guild.ID, member.ID)
-		logger.Errorf("%#v", member)
 		if parsed.Args[0].Value != nil {
 			member = parsed.Args[0].Value.(*dstate.MemberState)
-			logger.Errorf("%#v", member)
 		}
 
 		nick := ""
