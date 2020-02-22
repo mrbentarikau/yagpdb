@@ -636,10 +636,12 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 		ArgSwitches: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Switch: "id", Name: "List userIDs"},
+			&dcmd.ArgDef{Switch: "members", Name: "List only members"},
 		},
 		RunFunc: paginatedmessages.PaginatedCommand(0, func(parsed *dcmd.Data, p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
 
 			showUserIDs := false
+			onlyMembers := false
 			config, _, err := MBaseCmd(parsed, 0)
 			if err != nil {
 				return nil, err
@@ -654,8 +656,12 @@ var ModerationCommands = []*commands.YAGCommand{
 				showUserIDs = true
 			}
 
+			if parsed.Switches["members"].Value != nil && parsed.Switches["members"].Value.(bool) {
+				onlyMembers = true
+			}
+
 			offset := (page - 1) * 15
-			entries, err := TopWarns(parsed.GS.ID, offset, 15)
+			entries, err := TopWarns(parsed.GS.ID, offset, 15, onlyMembers)
 			if err != nil {
 				return nil, err
 			}
@@ -672,8 +678,8 @@ var ModerationCommands = []*commands.YAGCommand{
 			for _, v := range entries {
 				if !showUserIDs {
 					user := v.Username
-					if user == "" {
-						user = "unknown ID:" + strconv.FormatInt(v.UserID, 10)
+					if user == "" && onlyMembers {
+						continue
 					}
 					out += fmt.Sprintf("#%02d: %4d - %s\n", v.Rank, v.WarnCount, user)
 				} else {
