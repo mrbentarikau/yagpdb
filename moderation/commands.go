@@ -660,6 +660,10 @@ var ModerationCommands = []*commands.YAGCommand{
 				onlyMembers = true
 			}
 
+			if onlyMembers {
+				showUserIDs = false
+			}
+
 			offset := (page - 1) * 15
 			entries, err := TopWarns(parsed.GS.ID, offset, 15, onlyMembers)
 			if err != nil {
