@@ -11,6 +11,7 @@ import (
 	"github.com/jonas747/yagpdb/common/scheduledevents2"
 
 	// Plugin imports
+	"github.com/jonas747/yageconomy"
 	"github.com/jonas747/yagpdb/automod"
 	"github.com/jonas747/yagpdb/automod_legacy"
 	"github.com/jonas747/yagpdb/autorole"
@@ -39,7 +40,6 @@ import (
 	"github.com/jonas747/yagpdb/twitter"
 	"github.com/jonas747/yagpdb/verification"
 	"github.com/jonas747/yagpdb/youtube"
-	"github.com/jonas747/yageconomy"
 	// External plugins
 )
 
@@ -83,6 +83,5 @@ func main() {
 	admin.RegisterPlugin()
 	internalapi.RegisterPlugin()
 	yageconomy.RegisterPlugin()
-
 	run.Run()
 }
