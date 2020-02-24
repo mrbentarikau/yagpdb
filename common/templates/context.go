@@ -31,6 +31,8 @@ var (
 		"toInt64":    ToInt64,
 		"toFloat":    ToFloat64,
 		"toDuration": ToDuration,
+		"toRune":     ToRune,
+		"toByte":     ToByte,
 
 		// string manipulation
 		"joinStr":   joinStrings,
@@ -42,20 +44,20 @@ var (
 		"title":     strings.Title,
 
 		// math
-		"add":        add,
-		"sub":        tmplSub,
-		"mult":       tmplMult,
-		"div":        tmplDiv,
-		"mod":        tmplMod,
-		"fdiv":       tmplFDiv,
-		"sqrt":       tmplSqrt,
-		"pow":        tmplPow,
-		"log":        tmplLog,
-		"bitwiseAnd": tmplBitwiseAnd,
-		"round":      tmplRound,
-		"roundCeil":  tmplRoundCeil,
-		"roundFloor": tmplRoundFloor,
-		"roundEven":  tmplRoundEven,
+		"add":               add,
+		"sub":               tmplSub,
+		"mult":              tmplMult,
+		"div":               tmplDiv,
+		"mod":               tmplMod,
+		"fdiv":              tmplFDiv,
+		"sqrt":              tmplSqrt,
+		"pow":               tmplPow,
+		"log":               tmplLog,
+		"bitwiseAnd":        tmplBitwiseAnd,
+		"round":             tmplRound,
+		"roundCeil":         tmplRoundCeil,
+		"roundFloor":        tmplRoundFloor,
+		"roundEven":         tmplRoundEven,
 		"humanizeThousands": tmplHumanizeThousands,
 
 		// misc

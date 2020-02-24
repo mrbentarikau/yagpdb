@@ -201,21 +201,21 @@ func CreateMessageEdit(values ...interface{}) (*discordgo.MessageEdit, error) {
 	for key, val := range messageSdict {
 
 		switch key {
-			case "content":
-				temp := fmt.Sprint(val)
-				msg.Content = &temp
-			case "embed":
-				if val == nil { 
-					msg.Embed = (&discordgo.MessageEmbed{}).MarshalNil(true)
-					continue
-				}
-				embed, err := CreateEmbed(val)
-				if err != nil {
-					return nil, err
-				}
-				msg.Embed = embed
-			default:
-				return nil, errors.New(`invalid key "` + key + `" passed to message edit builder`)
+		case "content":
+			temp := fmt.Sprint(val)
+			msg.Content = &temp
+		case "embed":
+			if val == nil {
+				msg.Embed = (&discordgo.MessageEmbed{}).MarshalNil(true)
+				continue
+			}
+			embed, err := CreateEmbed(val)
+			if err != nil {
+				return nil, err
+			}
+			msg.Embed = embed
+		default:
+			return nil, errors.New(`invalid key "` + key + `" passed to message edit builder`)
 		}
 
 	}
@@ -800,6 +800,28 @@ func ToDuration(from interface{}) time.Duration {
 		return time.Duration(t)
 	default:
 		return 0
+	}
+}
+
+func ToRune(from interface{}) []rune {
+	switch t := from.(type) {
+	case int, int16, int32, int64, uint8, uint16, uint32, uint64, float32, float64:
+		return []rune(ToString(t))
+	case string:
+		return []rune(t)
+	default:
+		return nil
+	}
+}
+
+func ToByte(from interface{}) []byte {
+	switch t := from.(type) {
+	case int, int16, int32, int64, uint8, uint16, uint32, uint64, float32, float64:
+		return []byte(ToString(t))
+	case string:
+		return []byte(t)
+	default:
+		return nil
 	}
 }
 
