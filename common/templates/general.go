@@ -935,10 +935,21 @@ func tmplCurrentTime() time.Time {
 	return time.Now()
 }
 
-func tmplNewDate(year, monthInt, day, hour, min, sec int) time.Time {
-	var month time.Month
-	month = time.Month(monthInt)
-	return time.Date(year, month, day, hour, min, sec, 0, time.UTC)
+func tmplNewDate(year, monthInt, day, hour, min, sec int, location ...string) (time.Time, error) {
+	var loc *time.Location
+	var err error
+	month := time.Month(monthInt)
+
+	if len(location) >= 1 {
+		loc, err = time.LoadLocation(location[0])
+		if err != nil {
+			return time.Time{}, err
+		}
+	} else {
+		loc = time.UTC
+	}
+
+	return time.Date(year, month, day, hour, min, sec, 0, loc), nil
 }
 
 func tmplEscapeHere(in string) string {
