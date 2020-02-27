@@ -222,6 +222,7 @@ github.com/jonas747/discordgo v1.3.4-0.20200226061809-d90f08b761be h1:o9nuxiKZ5t
 github.com/jonas747/discordgo v1.3.4-0.20200226061809-d90f08b761be/go.mod h1:bAhKzQI2Jco59WVa5fhGOKdtMyGL7CFFBAxBeSGVCj0=
 github.com/jonas747/discordgo v1.3.4-0.20200226064344-25c18fdccaed h1:f81CYzkBohIPwYWzDMfGDI7uYDF0oEACZY5rPS91R8M=
 github.com/jonas747/discordgo v1.3.4-0.20200226064344-25c18fdccaed/go.mod h1:bAhKzQI2Jco59WVa5fhGOKdtMyGL7CFFBAxBeSGVCj0=
+github.com/jonas747/dshardorchestrator v0.0.0-20190717204625-752c847fa039/go.mod h1:Cs2ax5vvTtpgy2n8wp5zpBhd6A19ThLykp21XXSsrU0=
 github.com/jonas747/dshardorchestrator v0.1.0 h1:3/v+lx0gLupm7/VZr7wbfvUGhpxvuNC5JHaS+OnWjCc=
 github.com/jonas747/dshardorchestrator v0.1.0/go.mod h1:ZlA6h9kj2H5q2aQkZgBiROp8zpIjIUMJQ3SOpVdWYfQ=
 github.com/jonas747/dshardorchestrator/v2 v2.0.1-0.20200203181047-f9a62c68f600 h1:Hn7banyRdBGcKdNiNOZV2cu9duoBuk8C7GHalNApu2o=
@@ -552,6 +553,7 @@ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGm
 golang.org/x/tools v0.0.0-20181030000716-a0a13e073c7b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20190226205152-f727befe758c/go.mod h1:9Yl7xja0Znq3iFh3HoIrodX9oNMXvdceNzlUR8zjMvY=
+golang.org/x/tools v0.0.0-20190311212946-11955173bddd/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=
 golang.org/x/tools v0.0.0-20190312170243-e65039ee4138 h1:H3uGjxCR/6Ds0Mjgyp7LMK81+LvmbvWWEnJhzk1Pi9E=
 golang.org/x/tools v0.0.0-20190312170243-e65039ee4138/go.mod h1:LCzVGOaR6xXOjkQ3onu1FJEFr0SW1gC7cKk1uF8kGRs=
 golang.org/x/tools v0.0.0-20200225230052-807dcd883420 h1:4RJNOV+2rLxMEfr6QIpC7GEv9MjD6ApGXTCLrNF9+eA=
