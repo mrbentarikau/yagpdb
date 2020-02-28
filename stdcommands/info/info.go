@@ -14,7 +14,7 @@ var Command = &commands.YAGCommand{
 	Description: "Responds with bot information",
 	RunInDM:     true,
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
-		info := fmt.Sprintf(`**PAGSTDB - People Against Generally Shitty Things Discord Bot**\n
+		info := fmt.Sprintf(`**PAGSTDB - People Against Generally Shitty Things Discord Bot**
 Control panel: <https://%s/manage>
 				`, common.ConfHost.GetString())
 
