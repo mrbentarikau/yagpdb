@@ -2,9 +2,10 @@ package commands
 
 import (
 	"context"
-	"github.com/jonas747/yagpdb/bot/paginatedmessages"
 	"strconv"
 	"strings"
+
+	"github.com/jonas747/yagpdb/bot/paginatedmessages"
 
 	"emperror.dev/errors"
 	"github.com/jonas747/dcmd"
@@ -92,7 +93,7 @@ func TmplExecCmdFuncs(ctx *templates.Context, maxExec int, dryRun bool) (userCtx
 	execBot := func(cmd string, args ...interface{}) (interface{}, error) {
 
 		botUserCopy := *common.BotUser
-		botUserCopy.Username = "YAGPDB (cc: " + ctx.Msg.Author.Username + "#" + ctx.Msg.Author.Discriminator + ")"
+		botUserCopy.Username = "PAGSTDB (cc: " + ctx.Msg.Author.Username + "#" + ctx.Msg.Author.Discriminator + ")"
 
 		messageCopy := *ctx.Msg
 		messageCopy.Author = &botUserCopy

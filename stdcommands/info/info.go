@@ -14,10 +14,7 @@ var Command = &commands.YAGCommand{
 	Description: "Responds with bot information",
 	RunInDM:     true,
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
-		info := fmt.Sprintf(`**YAGPDB - Yet Another General Purpose Discord Bot**
-This bot focuses on being configurable and therefore is one of the more advanced bots.
-It can perform a range of general purpose functionality (Reddit feeds, various commands, moderation utilities, automoderator functionality and so on) and it's configured through a web control panel.
-I'm currently being run and developed by Jonas747#0001 (105487308693757952) but the bot is open source (<https://github.com/jonas747/yagpdb>), so if you know Go and want to make some contributions, feel free to make a PR.
+		info := fmt.Sprintf(`**PAGSTDB - People Against Generally Shitty Things Discord Bot**\n
 Control panel: <https://%s/manage>
 				`, common.ConfHost.GetString())
 
