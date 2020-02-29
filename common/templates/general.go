@@ -932,7 +932,7 @@ func slice(item reflect.Value, indices ...reflect.Value) (reflect.Value, error) 
 }
 
 func tmplCurrentTime() time.Time {
-	return time.Now()
+	return time.Now().UTC()
 }
 
 func tmplNewDate(year, monthInt, day, hour, min, sec int, location ...string) (time.Time, error) {
