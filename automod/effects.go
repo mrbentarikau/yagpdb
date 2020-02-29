@@ -307,7 +307,7 @@ func (kick *KickUserEffect) MergeDuplicates(data []interface{}) interface{} {
 type BanUserEffect struct{}
 
 type BanUserEffectData struct {
-	Duration     	  int
+	Duration          int
 	CustomReason      string `valid:",0,150,trimspace"`
 	MessageDeleteDays int
 }
@@ -395,6 +395,7 @@ func (mute *MuteUserEffect) UserSettings() []*SettingDef {
 		&SettingDef{
 			Name:    "Duration (minutes, 0 for permanent)",
 			Key:     "Duration",
+			Min:     0,
 			Kind:    SettingTypeInt,
 			Default: 10,
 		},
