@@ -327,7 +327,7 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 //tmplEditCCTriggerType changes custom commands trigger type, for interval it will use minutes without going further
 func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 	return func(ccID int, ccType string) (string, error) {
-		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 3) {
+		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 10) {
 			return "", templates.ErrTooManyCalls
 		}
 
