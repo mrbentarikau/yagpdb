@@ -349,13 +349,12 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			cmd.TriggerType = 6
 		case "interval":
 			//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
+			cmd.TriggerType = 5
 			num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
 			if err != nil {
 				return "", err
 			}
-			if num < 5 {
-				cmd.TriggerType = 5
-			} else {
+			if num > 5 {
 				cmd.TriggerType = 10
 			}
 		default:
