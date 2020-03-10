@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"log"
 	"time"
 
 	"emperror.dev/errors"
@@ -31,6 +32,7 @@ func init() {
 		ctx.ContextFuncs["execCC"] = tmplRunCC(ctx)
 		ctx.ContextFuncs["scheduleUniqueCC"] = tmplScheduleUniqueCC(ctx)
 		ctx.ContextFuncs["cancelScheduledUniqueCC"] = tmplCancelUniqueCC(ctx)
+		ctx.ContextFuncs["editCCTriggerType"] = tmplEditCCTriggerType(ctx)
 
 		ctx.ContextFuncs["dbSet"] = tmplDBSet(ctx)
 		ctx.ContextFuncs["dbSetExpire"] = tmplDBSetExpire(ctx)
@@ -318,6 +320,48 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 			return "", err
 		}
 
+		return "", nil
+	}
+}
+
+//tmplEditCCTriggerType changes custom commands trigger type, for interval it will use minutes without going further
+func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
+	return func(ccID int, ccType string) (string, error) {
+		cmd, err := models.FindCustomCommandG(context.Background(), ctx.GS.ID, int64(ccID))
+		if err != nil {
+			return "", errors.New("Couldn't find custom command")
+		}
+		log.Printf("KRAAKA %#v", cmd)
+		switch ccType {
+		case "none":
+			cmd.TriggerType = 10
+		case "command":
+			cmd.TriggerType = 0
+		case "prefix", "startsWith":
+			cmd.TriggerType = 1
+		case "contains":
+			cmd.TriggerType = 2
+		case "regex":
+			cmd.TriggerType = 3
+		case "exact":
+			cmd.TriggerType = 4
+		case "reaction":
+			cmd.TriggerType = 6
+		case "interval":
+			//cmd.TriggerType = 5
+			num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
+			if err != nil {
+				return "", err
+			}
+			if num < 5 {
+				cmd.TriggerType = 5
+			} else {
+				cmd.TriggerType = 0
+			}
+		default:
+			cmd.TriggerType = 10
+		}
+		_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type"))
 		return "", nil
 	}
 }
