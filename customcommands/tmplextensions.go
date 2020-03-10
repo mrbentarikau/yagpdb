@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
-	"log"
 	"time"
 
 	"emperror.dev/errors"
@@ -331,7 +330,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 		if err != nil {
 			return "", errors.New("Couldn't find custom command")
 		}
-		log.Printf("KRAAKA %#v", cmd)
+
 		switch ccType {
 		case "none":
 			cmd.TriggerType = 10
