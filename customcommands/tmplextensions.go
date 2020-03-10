@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"strings"
 	"time"
 
 	"emperror.dev/errors"
@@ -326,21 +327,21 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 //tmplEditCCTriggerType changes custom commands trigger type, for interval it will use minutes without going further
 func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 	return func(ccID int, ccType string) (string, error) {
-		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 10) {
+		/*if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 10) {
 			return "", templates.ErrTooManyCalls
-		}
+		}*/
 
 		cmd, err := models.FindCustomCommandG(context.Background(), ctx.GS.ID, int64(ccID))
 		if err != nil {
 			return "", errors.New("Couldn't find custom command")
 		}
 
-		switch ccType {
+		switch strings.ToLower(ccType) {
 		case "none":
 			cmd.TriggerType = 10
 		case "command":
 			cmd.TriggerType = 0
-		case "prefix", "startsWith":
+		case "prefix", "startswith":
 			cmd.TriggerType = 1
 		case "contains":
 			cmd.TriggerType = 2
@@ -350,20 +351,22 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			cmd.TriggerType = 4
 		case "reaction":
 			cmd.TriggerType = 6
-		case "interval":
-			//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
-			cmd.TriggerType = 5
+		//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
+		case "interval", "intervalminute":
 			num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
 			if err != nil {
 				return "", err
 			}
-			if num > 5 {
-				cmd.TriggerType = 10
+			if num > 4 {
+				return "", errors.New("You can have max 5 triggers on less than 10 minute intervals")
 			}
-		default:
-			cmd.TriggerType = 10
+			cmd.TriggerType = 5
+		//special case to convert to hourly interval
+		case "intervalhourly":
+			cmd.TriggerType = 5
+			cmd.TimeTriggerInterval *= 60
 		}
-		_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type"))
+		_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type", "time_trigger_interval"))
 		return "", nil
 	}
 }
