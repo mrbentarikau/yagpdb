@@ -327,7 +327,7 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 //tmplEditCCTriggerType changes custom commands trigger type, for interval it will use minutes without going further
 func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 	return func(ccID int, ccType string) (string, error) {
-		if ctx.IncreaseCheckCallCounter("editCCTriggerType", 10) {
+		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 2, 5) {
 			return "", templates.ErrTooManyCalls
 		}
 
@@ -351,8 +351,9 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			cmd.TriggerType = 4
 		case "reaction":
 			cmd.TriggerType = 6
-		//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
 		case "interval", "intervalminute":
+			//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
+			//0 minutes, a new entry is counted as an hour by the system.
 			num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
 			if err != nil {
 				return "", err
@@ -361,8 +362,8 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 				return "", errors.New("You can have max 5 triggers on less than 10 minute intervals")
 			}
 			cmd.TriggerType = 5
-		//special case to convert to hourly interval
 		case "intervalhourly":
+			//special case to convert to hourly interval
 			cmd.TriggerType = 5
 			cmd.TimeTriggerInterval *= 60
 		}
