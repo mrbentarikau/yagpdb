@@ -21,5 +21,6 @@ cmd/yagpdb/static/css/custom.css
 # The graw agent file
 *.agent
 *.exe
+keybase.txt
 .idea
 .vscode
