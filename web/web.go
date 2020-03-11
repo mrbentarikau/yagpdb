@@ -372,6 +372,7 @@ func setupRootMux() {
 	// Setup fileserver
 	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
 	mux.Handle(pat.Get("/robots.txt"), http.HandlerFunc(handleRobotsTXT))
+	mux.Handle(pat.Get("/keybase.txt"), http.HandlerFunc(handleAdsTXT))
 	mux.Handle(pat.Get("/ads.txt"), http.HandlerFunc(handleAdsTXT))
 
 	// General middleware
