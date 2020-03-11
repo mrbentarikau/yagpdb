@@ -406,6 +406,16 @@ Disallow: /manage/
 `))
 }
 
+func handleKeyBaseTXT(w http.ResponseWriter, r *http.Request) {
+	f, err := ioutil.ReadFile("keybase.txt")
+	if err != nil {
+		logger.WithError(err).Error("failed reading ads.txt file")
+		return
+	}
+
+	w.Write(f)
+}
+
 func handleAdsTXT(w http.ResponseWriter, r *http.Request) {
 	adsPath := ConfAdsTxt.GetString()
 	if adsPath == "" {
