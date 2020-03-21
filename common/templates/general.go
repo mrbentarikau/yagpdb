@@ -601,7 +601,7 @@ func joinStrings(sep string, args ...interface{}) (string, error) {
 
 		case int, uint, int32, uint32, int64, uint64:
 			builder.WriteString(ToString(v))
-			
+
 		case fmt.Stringer:
 			builder.WriteString(t.String())
 
@@ -743,6 +743,12 @@ func ToString(from interface{}) string {
 		return strconv.FormatUint(uint64(t), 10)
 	case uint64:
 		return strconv.FormatUint(uint64(t), 10)
+	case []rune:
+		tx := from.([]rune)
+		return string(tx)
+	case []byte:
+		tx := from.([]byte)
+		return string(tx)
 	case string:
 		return t
 	default:
