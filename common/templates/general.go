@@ -599,8 +599,11 @@ func joinStrings(sep string, args ...interface{}) (string, error) {
 				}
 			}
 
-		case int, int32, uint32, int64, uint64:
+		case int, uint, int32, uint32, int64, uint64:
 			builder.WriteString(ToString(v))
+			
+		case fmt.Stringer:
+			builder.WriteString(t.String())
 
 		}
 
@@ -948,16 +951,6 @@ func tmplNewDate(year, monthInt, day, hour, min, sec int, location ...string) (t
 	}
 
 	return time.Date(year, month, day, hour, min, sec, 0, loc), nil
-}
-
-func tmplEscapeHere(in string) string {
-	return common.EscapeEveryoneHere(in, false, true)
-}
-func tmplEscapeEveryone(in string) string {
-	return common.EscapeEveryoneHere(in, true, false)
-}
-func tmplEscapeEveryoneHere(in string) string {
-	return common.EscapeEveryoneHere(in, true, true)
 }
 
 func tmplHumanizeDurationHours(in time.Duration) string {
