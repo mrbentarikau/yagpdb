@@ -744,11 +744,9 @@ func ToString(from interface{}) string {
 	case uint64:
 		return strconv.FormatUint(uint64(t), 10)
 	case []rune:
-		tx := from.([]rune)
-		return string(tx)
+		return string(from.([]rune))
 	case []byte:
-		tx := from.([]byte)
-		return string(tx)
+		return string(from.([]byte))
 	case string:
 		return t
 	default:
