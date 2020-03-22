@@ -328,7 +328,7 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 //tmplEditCCTriggerType changes custom commands trigger type
 func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 	return func(ccID int, ccType string) (string, error) {
-		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 3) {
+		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 5) {
 			return "", templates.ErrTooManyCalls
 		}
 
@@ -336,6 +336,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 		if err != nil {
 			return "", errors.New("Couldn't find custom command")
 		}
+
 		update := true
 		switch strings.ToLower(ccType) {
 		case "none":
@@ -370,15 +371,25 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 		default:
 			update = false
 		}
+
 		if update {
 			_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type", "time_trigger_interval"))
 			if err != nil {
 				return "", err
 			}
-			types := map[int]string{10: "None", 0: "Command", 1: "Starts With", 2: "Contains", 3: "Regex", 4: "Exact Match", 5: "Interval", 6: "Reaction"}
-			return fmt.Sprintf("Doneso. Changed CC#%d trigger to type %s.", ccID, types[cmd.TriggerType]), nil
+			types := map[int]string{
+				10: "None",
+				0:  "Command",
+				1:  "Starts With",
+				2:  "Contains",
+				3:  "Regex",
+				4:  "Exact Match",
+				5:  "Interval",
+				6:  "Reaction",
+			}
+			return fmt.Sprintf("Doneso. Changed CC#%d trigger to type **%s**.", ccID, types[cmd.TriggerType]), nil
 		}
-		return fmt.Sprintf("Did not change anything %s-type mismatch", ccType), nil
+		return fmt.Sprintf("Did not change type: **%s** mismatch.", ccType), nil
 	}
 }
 
