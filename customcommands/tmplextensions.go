@@ -336,7 +336,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 		if err != nil {
 			return "", errors.New("Couldn't find custom command")
 		}
-
+		update := true
 		switch strings.ToLower(ccType) {
 		case "none":
 			cmd.TriggerType = 10
@@ -367,13 +367,18 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			//special case to convert to hourly interval
 			cmd.TriggerType = 5
 			cmd.TimeTriggerInterval *= 60
+		default:
+			update = false
 		}
-		_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type", "time_trigger_interval"))
-		if err != nil {
-			return "", err
+		if update {
+			_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type", "time_trigger_interval"))
+			if err != nil {
+				return "", err
+			}
+			types := map[int]string{10: "None", 0: "Command", 1: "Starts With", 2: "Contains", 3: "Regex", 4: "Exact Match", 5: "Interval", 6: "Reaction"}
+			return fmt.Sprintf("Doneso. Changed CC#%d trigger to type %s.", ccID, types[cmd.TriggerType]), nil
 		}
-		types := map[int]string{10: "None", 0: "Command", 1: "Starts With", 2: "Contains", 3: "Regex", 4: "Exact Match", 5: "Interval", 6: "Reaction"}
-		return fmt.Sprintf("Changed CC#%d trigger to type %s.", ccID, types[cmd.TriggerType]), nil
+		return "", nil
 	}
 }
 
