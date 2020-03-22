@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
 
@@ -327,7 +328,7 @@ func tmplCancelUniqueCC(ctx *templates.Context) interface{} {
 //tmplEditCCTriggerType changes custom commands trigger type
 func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 	return func(ccID int, ccType string) (string, error) {
-		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 2, 5) {
+		if ctx.IncreaseCheckCallCounterPremium("editCCTriggerType", 1, 3) {
 			return "", templates.ErrTooManyCalls
 		}
 
@@ -368,7 +369,11 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			cmd.TimeTriggerInterval *= 60
 		}
 		_, err = cmd.UpdateG(context.Background(), boil.Whitelist("trigger_type", "time_trigger_interval"))
-		return "", nil
+		if err != nil {
+			return "", err
+		}
+		types := map[int]string{10: "None", 0: "Command", 1: "Starts With", 2: "Contains", 3: "Regex", 4: "Exact Match", 5: "Interval", 6: "Reaction"}
+		return fmt.Sprintf("Changed CC#%d trigger to type %s.", ccID, types[cmd.TriggerType]), nil
 	}
 }
 
