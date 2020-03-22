@@ -378,7 +378,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			types := map[int]string{10: "None", 0: "Command", 1: "Starts With", 2: "Contains", 3: "Regex", 4: "Exact Match", 5: "Interval", 6: "Reaction"}
 			return fmt.Sprintf("Doneso. Changed CC#%d trigger to type %s.", ccID, types[cmd.TriggerType]), nil
 		}
-		return "", nil
+		return fmt.Sprintf("Did not change anything %s-type mismatch", ccType), nil
 	}
 }
 
