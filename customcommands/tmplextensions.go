@@ -376,26 +376,33 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 				cmd.TriggerType = 4
 			}
 		case "reaction":
+			if cmd.TriggerType == 6 {
+				update = false
+			} else {
+				cmd.TriggerType = 6
+			}
+		case "interval_m":
 			if cmd.TriggerType == 5 {
 				update = false
 			} else {
+				//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
+				num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
+				if err != nil {
+					return "", err
+				}
+				if num > 4 {
+					return "", errors.New("You can have max 5 triggers on less than 10 minute intervals")
+				}
 				cmd.TriggerType = 5
 			}
-		case "interval_m":
-			//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
-			//0 minutes, a new entry is counted as an hour by the system.
-			num, err := models.CustomCommands(qm.Where("guild_id = ? AND local_id != ? AND trigger_type = 5 AND time_trigger_interval < 10", ctx.GS.ID, int64(ccID))).CountG(context.Background())
-			if err != nil {
-				return "", err
-			}
-			if num > 4 {
-				return "", errors.New("You can have max 5 triggers on less than 10 minute intervals")
-			}
-			cmd.TriggerType = 5
 		case "interval_h":
-			//special case to convert to hourly interval
-			cmd.TriggerType = 5
-			cmd.TimeTriggerInterval *= 60
+			if cmd.TriggerType == 5 {
+				update = false
+			} else {
+				//special case to convert to hourly interval
+				cmd.TriggerType = 5
+				cmd.TimeTriggerInterval *= 60
+			}
 		default:
 			update = false
 		}
