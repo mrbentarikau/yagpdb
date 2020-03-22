@@ -387,9 +387,9 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 				5:  "Interval",
 				6:  "Reaction",
 			}
-			return fmt.Sprintf("Doneso. Changed CC#%d trigger to type **%s**.", ccID, types[cmd.TriggerType]), nil
+			return fmt.Sprintf("Doneso. Changed **CC#%d** trigger to type **%s**.", ccID, types[cmd.TriggerType]), nil
 		}
-		return fmt.Sprintf("Did not change type: **%s** mismatch.", ccType), nil
+		return fmt.Sprintf("Did not change trigger type: **%s** mismatch.", ccType), nil
 	}
 }
 
