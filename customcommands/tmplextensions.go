@@ -340,19 +340,47 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 		update := true
 		switch strings.ToLower(ccType) {
 		case "none":
-			cmd.TriggerType = 10
+			if cmd.TriggerType == 10 {
+				update = false
+			} else {
+				cmd.TriggerType = 10
+			}
 		case "command":
-			cmd.TriggerType = 0
+			if cmd.TriggerType == 0 {
+				update = false
+			} else {
+				cmd.TriggerType = 0
+			}
 		case "prefix", "starts":
-			cmd.TriggerType = 1
+			if cmd.TriggerType == 1 {
+				update = false
+			} else {
+				cmd.TriggerType = 1
+			}
 		case "contains":
-			cmd.TriggerType = 2
+			if cmd.TriggerType == 2 {
+				update = false
+			} else {
+				cmd.TriggerType = 2
+			}
 		case "regex":
-			cmd.TriggerType = 3
+			if cmd.TriggerType == 3 {
+				update = false
+			} else {
+				cmd.TriggerType = 3
+			}
 		case "exact":
-			cmd.TriggerType = 4
+			if cmd.TriggerType == 4 {
+				update = false
+			} else {
+				cmd.TriggerType = 4
+			}
 		case "reaction":
-			cmd.TriggerType = 6
+			if cmd.TriggerType == 5 {
+				update = false
+			} else {
+				cmd.TriggerType = 5
+			}
 		case "interval_m":
 			//Interval is counted as minutes in Postgres and this section takes care of calling too many interval triggers under 10 minutes.
 			//0 minutes, a new entry is counted as an hour by the system.
@@ -389,7 +417,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			}
 			return fmt.Sprintf("Doneso. Changed **CC#%d** trigger to type: **%s**.", ccID, types[cmd.TriggerType]), nil
 		}
-		return fmt.Sprintf("Did not change trigger type: **%s** mismatch.", ccType), nil
+		return fmt.Sprintf("Did not change trigger type: **%s** mismatch or is the same.", ccType), nil
 	}
 }
 
