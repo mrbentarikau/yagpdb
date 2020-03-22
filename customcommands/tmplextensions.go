@@ -341,7 +341,7 @@ func tmplEditCCTriggerType(ctx *templates.Context) interface{} {
 			cmd.TriggerType = 10
 		case "command":
 			cmd.TriggerType = 0
-		case "prefix", "startswith":
+		case "prefix", "starts":
 			cmd.TriggerType = 1
 		case "contains":
 			cmd.TriggerType = 2
