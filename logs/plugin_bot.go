@@ -26,7 +26,7 @@ var _ bot.BotInitHandler = (*Plugin)(nil)
 var _ commands.CommandProvider = (*Plugin)(nil)
 
 func (p *Plugin) AddCommands() {
-	commands.AddRootCommands(cmdLogs, cmdWhois, cmdNicknames, cmdUsernames, cmdMigrate)
+	commands.AddRootCommands(p, cmdLogs, cmdWhois, cmdNicknames, cmdUsernames, cmdMigrate)
 }
 
 func (p *Plugin) BotInit() {
