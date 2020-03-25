@@ -516,6 +516,7 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 		RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
 			var err error
+
 			config, _, err := MBaseCmd(parsed, 0)
 			if err != nil {
 				return nil, err
@@ -966,7 +967,12 @@ func PaginateWarnings(parsed *dcmd.Data) func(p *paginatedmessages.PaginatedMess
 
 		var err error
 		skip := (page - 1) * 6
-		userID := parsed.Args[0].Int64()
+		var userID int64
+		if parsed.Args[0].Int64() == 0 {
+			userID = (commands.ContextMS(parsed.Context())).ID
+		} else {
+			userID = parsed.Args[0].Int64()
+		}
 		limit := 6
 
 		var result []*WarningModel
