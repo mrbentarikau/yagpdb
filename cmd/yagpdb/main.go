@@ -12,7 +12,6 @@ import (
 	"github.com/jonas747/yagpdb/common/scheduledevents2"
 
 	// Plugin imports
-	"github.com/jonas747/yageconomy"
 	"github.com/jonas747/yagpdb/automod"
 	"github.com/jonas747/yagpdb/automod_legacy"
 	"github.com/jonas747/yagpdb/autorole"
@@ -84,6 +83,5 @@ func main() {
 	timezonecompanion.RegisterPlugin()
 	admin.RegisterPlugin()
 	internalapi.RegisterPlugin()
-	yageconomy.RegisterPlugin()
 	run.Run()
 }
