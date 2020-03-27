@@ -1129,7 +1129,6 @@ func (r *UserStatusRegexTrigger) CheckUserStatus(ms *dstate.MemberState, data in
 	}
 
 	re := item.Value().(*regexp.Regexp)
-	logger.Warn("KRAAKA2 UUGU")
 	if re.MatchString(ms.PresenceGame.State) {
 		if r.BaseRegexTrigger.Inverse {
 			return false, nil
