@@ -406,18 +406,19 @@ var customCommandsRanToday = new(int64)
 func pollCCsRan() {
 	t := time.NewTicker(time.Minute)
 	for {
-		var result struct {
+		/*var result struct {
 			Count int64
-		}
+		}*/
 
 		within := time.Now().Add(-24 * time.Hour)
-
-		const q = `SELECT SUM(count) FROM analytics WHERE created_at > $1 AND (name="executed_cc" OR name="cmd_executed_customcommands")`
+		var result int64
+		const q = "SELECT SUM(count) FROM analytics WHERE created_at > $1 AND (name='executed_cc' OR name='cmd_executed_customcommands')"
 		err := common.PQ.QueryRow(q, within).Scan(&result)
+		logger.Warn("KRAAKA ", result)
 		if err != nil {
 			logger.WithError(err).Error("failed counting commands ran today")
 		} else {
-			atomic.StoreInt64(customCommandsRanToday, result.Count)
+			atomic.StoreInt64(customCommandsRanToday, result)
 		}
 
 		<-t.C
