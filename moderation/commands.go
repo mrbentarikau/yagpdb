@@ -508,7 +508,7 @@ var ModerationCommands = []*commands.YAGCommand{
 		Aliases:       []string{"Warns"},
 		RequiredArgs:  0,
 		Arguments: []*dcmd.ArgDef{
-			&dcmd.ArgDef{Name: "User", Type: dcmd.UserID},
+			&dcmd.ArgDef{Name: "User", Type: dcmd.UserID, Default: 0},
 			&dcmd.ArgDef{Name: "Page", Type: &dcmd.IntArg{Max: 10000}, Default: 0},
 		},
 		ArgSwitches: []*dcmd.ArgDef{

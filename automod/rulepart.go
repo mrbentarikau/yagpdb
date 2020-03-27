@@ -35,16 +35,20 @@ var RulePartMap = map[int]RulePart{
 	19: &NicknameRegexTrigger{BaseRegexTrigger: BaseRegexTrigger{Inverse: true}},
 	20: &NicknameWordlistTrigger{Blacklist: false},
 	21: &NicknameWordlistTrigger{Blacklist: true},
-	22: &SlowmodeTrigger{Attachments: true, ChannelBased: false},
-	23: &SlowmodeTrigger{Attachments: true, ChannelBased: true},
-	24: &UsernameWordlistTrigger{Blacklist: false},
-	25: &UsernameWordlistTrigger{Blacklist: true},
-	26: &UsernameRegexTrigger{BaseRegexTrigger{Inverse: false}},
-	27: &UsernameRegexTrigger{BaseRegexTrigger{Inverse: true}},
-	29: &UsernameInviteTrigger{},
-	30: &MemberJoinTrigger{},
-	31: &MessageAttachmentTrigger{},
-	32: &MessageAttachmentTrigger{RequiresAttachment: true},
+	22: &UserStatusRegexTrigger{BaseRegexTrigger{Inverse: false}},
+	23: &UserStatusRegexTrigger{BaseRegexTrigger{Inverse: true}},
+	24: &UserStatusWordlistTrigger{Blacklist: false},
+	25: &UserStatusWordlistTrigger{Blacklist: true},
+	26: &SlowmodeTrigger{Attachments: true, ChannelBased: false},
+	27: &SlowmodeTrigger{Attachments: true, ChannelBased: true},
+	28: &UsernameWordlistTrigger{Blacklist: false},
+	29: &UsernameWordlistTrigger{Blacklist: true},
+	30: &UsernameRegexTrigger{BaseRegexTrigger{Inverse: false}},
+	31: &UsernameRegexTrigger{BaseRegexTrigger{Inverse: true}},
+	32: &UsernameInviteTrigger{},
+	33: &MemberJoinTrigger{},
+	34: &MessageAttachmentTrigger{},
+	35: &MessageAttachmentTrigger{RequiresAttachment: true},
 
 	// Conditions 2xx
 	200: &MemberRolesCondition{Blacklist: true},
@@ -226,6 +230,13 @@ type NicknameListener interface {
 	RulePart
 
 	CheckNickname(ms *dstate.MemberState, data interface{}) (isAffected bool, err error)
+}
+
+// UserStatusListener is a trigger that gets triggered on a specific userStatus
+type UserStatusListener interface {
+	RulePart
+
+	CheckUserStatus(ms *dstate.MemberState, data interface{}) (isAffected bool, err error)
 }
 
 // UsernameListener is a trigger that gets triggered on a nickname change

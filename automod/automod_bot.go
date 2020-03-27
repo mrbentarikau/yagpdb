@@ -28,6 +28,7 @@ func (p *Plugin) BotInit() {
 	eventsystem.AddHandlerAsyncLastLegacy(p, p.handleGuildMemberUpdate, eventsystem.EventGuildMemberUpdate)
 	eventsystem.AddHandlerAsyncLastLegacy(p, p.handleMsgUpdate, eventsystem.EventMessageUpdate)
 	eventsystem.AddHandlerAsyncLastLegacy(p, p.handleGuildMemberJoin, eventsystem.EventGuildMemberAdd)
+	eventsystem.AddHandlerAsyncLastLegacy(p, p.handlePresenceUpdate, eventsystem.EventPresenceUpdate)
 
 	scheduledevents2.RegisterHandler("amod2_reset_channel_ratelimit", ResetChannelRatelimitData{}, handleResetChannelRatelimit)
 }
@@ -202,13 +203,28 @@ func (p *Plugin) handleGuildMemberUpdate(evt *eventsystem.EventData) {
 	p.checkNickname(ms)
 }
 
+func (p *Plugin) handlePresenceUpdate(evt *eventsystem.EventData) {
+	evtData := evt.PresenceUpdate()
+
+	presence := evtData.Presence
+	if presence.Game.State == "" {
+		return
+	}
+	ms := evt.GS.MemberCopy(true, presence.User.ID)
+
+	p.checkUserStatus(ms)
+}
+
 func (p *Plugin) handleGuildMemberJoin(evt *eventsystem.EventData) {
 	evtData := evt.GuildMemberAdd()
 
 	ms := dstate.MSFromDGoMember(evt.GS, evtData.Member)
 
+	mstatus := evt.GS.MemberCopy(true, evtData.Member.User.ID)
+	logger.Warn("LARA CROFT_", mstatus)
 	p.checkJoin(ms)
 	p.checkUsername(ms)
+	p.checkUserStatus(mstatus)
 }
 
 func (p *Plugin) checkNickname(ms *dstate.MemberState) {
@@ -219,6 +235,17 @@ func (p *Plugin) checkNickname(ms *dstate.MemberState) {
 		}
 
 		return cast.CheckNickname(ms, trig.ParsedSettings)
+	})
+}
+
+func (p *Plugin) checkUserStatus(ms *dstate.MemberState) {
+	p.CheckTriggers(nil, ms, nil, nil, func(trig *ParsedPart) (activated bool, err error) {
+		cast, ok := trig.Part.(UserStatusListener)
+		if !ok {
+			return false, nil
+		}
+
+		return cast.CheckUserStatus(ms, trig.ParsedSettings)
 	})
 }
 
