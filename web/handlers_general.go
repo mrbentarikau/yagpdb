@@ -23,6 +23,7 @@ import (
 	"github.com/jonas747/yagpdb/common/patreon"
 	"github.com/jonas747/yagpdb/web/discordblog"
 	"github.com/patrickmn/go-cache"
+	"github.com/volatiletech/null"
 	"goji.io/pat"
 )
 
@@ -406,18 +407,15 @@ var customCommandsRanToday = new(int64)
 func pollCCsRan() {
 	t := time.NewTicker(time.Minute)
 	for {
-		/*var result struct {
-			Count int64
-		}*/
 
 		within := time.Now().Add(-24 * time.Hour)
-		var result int64
+		var result null.Int64
 		const q = "SELECT SUM(count) FROM analytics WHERE created_at > $1 AND (name='executed_cc' OR name='cmd_executed_customcommands')"
 		err := common.PQ.QueryRow(q, within).Scan(&result)
 		if err != nil {
 			logger.WithError(err).Error("failed counting commands ran today")
 		} else {
-			atomic.StoreInt64(customCommandsRanToday, result)
+			atomic.StoreInt64(customCommandsRanToday, result.Int64)
 		}
 
 		<-t.C
