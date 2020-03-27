@@ -220,10 +220,8 @@ func (p *Plugin) handleGuildMemberJoin(evt *eventsystem.EventData) {
 
 	ms := dstate.MSFromDGoMember(evt.GS, evtData.Member)
 
-	//mstatus := evt.GS.MemberCopy(true, evtData.Member.User.ID)
 	p.checkJoin(ms)
 	p.checkUsername(ms)
-	//p.checkUserStatus(mstatus)
 }
 
 func (p *Plugin) checkNickname(ms *dstate.MemberState) {
