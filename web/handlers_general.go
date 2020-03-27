@@ -414,7 +414,6 @@ func pollCCsRan() {
 		var result int64
 		const q = "SELECT SUM(count) FROM analytics WHERE created_at > $1 AND (name='executed_cc' OR name='cmd_executed_customcommands')"
 		err := common.PQ.QueryRow(q, within).Scan(&result)
-		logger.Warn("KRAAKA ", result)
 		if err != nil {
 			logger.WithError(err).Error("failed counting commands ran today")
 		} else {
