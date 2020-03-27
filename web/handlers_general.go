@@ -147,6 +147,7 @@ func HandleLandingPage(w http.ResponseWriter, r *http.Request) (TemplateData, er
 
 	// Command stats
 	tmpl["Commands"] = atomic.LoadInt64(commandsRanToday)
+	tmpl["CCs"] = atomic.LoadInt64(customCommandsRanToday)
 
 	return tmpl, nil
 }
@@ -394,6 +395,29 @@ func pollCommandsRan() {
 			logger.WithError(err).Error("failed counting commands ran today")
 		} else {
 			atomic.StoreInt64(commandsRanToday, result.Count)
+		}
+
+		<-t.C
+	}
+}
+
+var customCommandsRanToday = new(int64)
+
+func pollCCsRan() {
+	t := time.NewTicker(time.Minute)
+	for {
+		var result struct {
+			Count int64
+		}
+
+		within := time.Now().Add(-24 * time.Hour)
+
+		const q = `SELECT SUM(count) FROM analytics WHERE created_at > $1 AND (name="executed_cc" OR name="cmd_executed_customcommands")`
+		err := common.PQ.QueryRow(q, within).Scan(&result)
+		if err != nil {
+			logger.WithError(err).Error("failed counting commands ran today")
+		} else {
+			atomic.StoreInt64(customCommandsRanToday, result.Count)
 		}
 
 		<-t.C
