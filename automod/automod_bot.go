@@ -210,8 +210,8 @@ func (p *Plugin) handlePresenceUpdate(evt *eventsystem.EventData) {
 	if presence.Game.State == "" {
 		return
 	}
-	ms := evt.GS.MemberCopy(true, presence.User.ID)
 
+	ms := evt.GS.MemberCopy(true, presence.User.ID)
 	p.checkUserStatus(ms)
 }
 
