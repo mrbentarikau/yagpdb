@@ -54,7 +54,15 @@ var (
 		"pow":  tmplPow,
 		"log":  tmplLog,
 
-		"bitwiseAnd":        tmplBitwiseAnd,
+		// bitwise functions
+		"bitwiseAnd":   tmplBitwiseAnd,
+		"bitwiseOr":    tmplBitwiseOr,
+		"bitwiseXor":   tmplBitwiseXor,
+		"bitwiseClear": tmplBitwiseClear,
+		"shiftLeft":    tmplShiftLeft,
+		"shiftRight":   tmplShiftRight,
+
+		// rounding etc...
 		"round":             tmplRound,
 		"roundCeil":         tmplRoundCeil,
 		"roundFloor":        tmplRoundFloor,
