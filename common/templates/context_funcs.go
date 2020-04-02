@@ -224,7 +224,7 @@ func (c *Context) tmplSendMessage(filterSpecialMentions bool, returnID bool) fun
 		case *discordgo.MessageSend:
 			msgSend = typedMsg
 			if !filterSpecialMentions {
-				msgSend.AllowedMentions = discordgo.AllowedMentions{Parse: parseMentions,} 
+				msgSend.AllowedMentions = discordgo.AllowedMentions{Parse: parseMentions}
 			}
 		default:
 			msgSend.Content = fmt.Sprint(msg)
@@ -1097,6 +1097,46 @@ func (c *Context) tmplEditNickname(Nickname string) (string, error) {
 	}
 
 	err := common.BotSession.GuildMemberNickname(c.GS.ID, c.MS.ID, Nickname)
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
+}
+
+func (c *Context) tmplPinMessage(channel, message interface{}) (string, error) {
+	if c.IncreaseCheckCallCounter("messagePins", 10) {
+		return "", ErrTooManyCalls
+	}
+
+	cID := c.ChannelArg(channel)
+	if cID == 0 {
+		return "", errors.New("Unknown channel")
+	}
+
+	mID := ToInt64(message)
+
+	err := common.BotSession.ChannelMessagePin(cID, mID)
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
+}
+
+func (c *Context) tmplUnpinMessage(channel, message interface{}) (string, error) {
+	if c.IncreaseCheckCallCounter("messagePins", 10) {
+		return "", ErrTooManyCalls
+	}
+
+	cID := c.ChannelArg(channel)
+	if cID == 0 {
+		return "", errors.New("Unknown channel")
+	}
+
+	mID := ToInt64(message)
+
+	err := common.BotSession.ChannelMessageUnpin(cID, mID)
 	if err != nil {
 		return "", err
 	}

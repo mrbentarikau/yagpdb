@@ -475,6 +475,8 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["sendMessageNoEscapeRetID"] = c.tmplSendMessage(false, true)
 	c.ContextFuncs["editMessage"] = c.tmplEditMessage(true)
 	c.ContextFuncs["editMessageNoEscape"] = c.tmplEditMessage(false)
+	c.ContextFuncs["pinMessage"] = c.tmplPinMessage
+	c.ContextFuncs["unpinMessage"] = c.tmplUnpinMessage
 
 	// Mentions
 	c.ContextFuncs["mentionEveryone"] = c.tmplMentionEveryone
