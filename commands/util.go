@@ -332,3 +332,32 @@ func (ma *MemberArg) ExtractID(part string, data *dcmd.Data) int64 {
 func (ma *MemberArg) HelpName() string {
 	return "Member"
 }
+
+// RoleArg matches an id or name and returns a discordgo.Role
+type RoleArg struct{}
+
+func (ra *RoleArg) Matches(def *dcmd.ArgDef, part string) bool {
+	if len(part) < 1 {
+		return false
+	}
+
+	return true
+}
+
+func (ra *RoleArg) Parse(def *dcmd.ArgDef, part string, data *dcmd.Data) (interface{}, error) {
+	roles := data.GS.Guild.Roles
+	var role *discordgo.Role
+	for _, v := range roles {
+		if v.Name == part {
+			role = v
+			return role, nil
+		}
+	}
+
+	return nil, dcmd.NewSimpleUserError("Invalid role")
+
+}
+
+func (ra *RoleArg) HelpName() string {
+	return "Role"
+}
