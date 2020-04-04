@@ -367,8 +367,15 @@ func (ra *RoleArg) Parse(def *dcmd.ArgDef, part string, data *dcmd.Data) (interf
 	/*if len(id) < 1 {
 		return nil, dcmd.NewSimpleUserError("Invalid role mention or id")
 	}*/
-
-	idName := strconv.FormatInt(id.(int64), 10)
+	var idName string
+	switch t := id.(type) {
+	case int, int32, int64:
+		idName = strconv.FormatInt(t.(int64), 10)
+	case string:
+		idName = t
+	default:
+		idName = ""
+	}
 	roles := data.GS.Guild.Roles
 	var role *discordgo.Role
 	for _, v := range roles {
