@@ -13,10 +13,11 @@ import (
 
 	"github.com/jonas747/yagpdb/bot/eventsystem"
 	"github.com/jonas747/yagpdb/common/config"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 
 	"emperror.dev/errors"
 	"github.com/jonas747/discordgo"
-	"github.com/jonas747/retryableredis"
 	"github.com/jonas747/yagpdb/bot"
 	"github.com/jonas747/yagpdb/common"
 	"github.com/mediocregopher/radix/v3"
@@ -111,7 +112,7 @@ func RegisterSource(name string, source PluginWithSourceDisabler) {
 }
 
 func incrIDCounter() (next int64) {
-	err := common.RedisPool.Do(retryableredis.Cmd(&next, "INCR", "mqueue_id_counter"))
+	err := common.RedisPool.Do(radix.Cmd(&next, "INCR", "mqueue_id_counter"))
 	if err != nil {
 		logger.WithError(err).Error("Failed increasing mqueue id counter")
 		return -1
@@ -135,7 +136,7 @@ func QueueMessage(elem *QueuedElement) {
 		return
 	}
 
-	err = common.RedisPool.Do(retryableredis.Cmd(nil, "ZADD", "mqueue", "-1", string(serialized)))
+	err = common.RedisPool.Do(radix.Cmd(nil, "ZADD", "mqueue", "-1", string(serialized)))
 	if err != nil {
 		return
 	}
@@ -229,6 +230,23 @@ func calcListAverage(in *list.List) int {
 	return average
 }
 
+var (
+	metricsQueueSize = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "yagpdb_mqueue_size_total",
+		Help: "The size of the send message queue",
+	})
+
+	metricsRatelimit = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "yagpdb_mqueue_ratelimits_total",
+		Help: "Ratelimits hit on the webhook session",
+	})
+
+	metricsProcessed = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "yagpdb_mqueue_processed_total",
+		Help: "Total mqueue elements processed",
+	}, []string{"source"})
+)
+
 func startPolling() {
 	startedLock.Lock()
 	if started {
@@ -251,14 +269,11 @@ func startPolling() {
 		case <-ticker.C:
 			pollRedis(first)
 			first = false
-			if common.Statsd != nil {
-				workmu.Lock()
-				l := len(workSlice)
-				workmu.Unlock()
 
-				common.Statsd.Gauge("yagpdb.mqueue.size", float64(l), nil, 1)
-				common.Statsd.Gauge("yagpdb.mqueue.numworkers", float64(atomic.LoadInt32(numWorkers)), nil, 1)
-			}
+			workmu.Lock()
+			l := len(workSlice)
+			workmu.Unlock()
+			metricsQueueSize.Set(float64(l))
 		}
 	}
 }
@@ -285,7 +300,7 @@ func pollRedis(first bool) {
 		max = strconv.FormatInt(common.CurrentRunCounter, 10)
 	}
 
-	err := common.RedisPool.Do(retryableredis.Cmd(&results, "ZRANGEBYSCORE", "mqueue", "-1", "("+max))
+	err := common.RedisPool.Do(radix.Cmd(&results, "ZRANGEBYSCORE", "mqueue", "-1", "("+max))
 	if err != nil {
 		logger.WithError(err).Error("Failed polling redis mqueue")
 		return
@@ -321,7 +336,7 @@ func pollRedis(first bool) {
 			}
 
 			// Mark it as being processed so it wont get caught in further polling, unless its a new process in which case it wasnt completed
-			rc.Do(retryableredis.FlatCmd(nil, "ZADD", "mqueue", common.CurrentRunCounter, string(elem)))
+			rc.Do(radix.FlatCmd(nil, "ZADD", "mqueue", common.CurrentRunCounter, string(elem)))
 
 			workSlice = append(workSlice, &workItem{
 				elem: parsed,
@@ -451,7 +466,7 @@ func process(elem *QueuedElement, raw []byte) {
 	queueLogger := logger.WithField("mq_id", id)
 
 	defer func() {
-		common.RedisPool.Do(retryableredis.Cmd(nil, "ZREM", "mqueue", string(raw)))
+		common.RedisPool.Do(radix.Cmd(nil, "ZREM", "mqueue", string(raw)))
 	}()
 
 	for {
@@ -493,6 +508,8 @@ func process(elem *QueuedElement, raw []byte) {
 		queueLogger.Warn("Non-discord related error when sending message, retrying. ", err)
 		time.Sleep(time.Second)
 	}
+
+	metricsProcessed.With(prometheus.Labels{"source": elem.Source}).Inc()
 }
 
 var disableOnError = []int{
@@ -613,7 +630,5 @@ func handleWebhookSessionRatelimit(s *discordgo.Session, r *discordgo.RateLimit)
 		return
 	}
 
-	if common.Statsd != nil {
-		common.Statsd.Incr("yagpdb.webhook_session_ratelimit", nil, 1)
-	}
+	metricsRatelimit.Inc()
 }

@@ -12,9 +12,9 @@ import (
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/dstate"
 	"github.com/jonas747/dutil"
-	"github.com/jonas747/retryableredis"
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/common/pubsub"
+	"github.com/mediocregopher/radix/v3"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -112,6 +112,25 @@ func AdminOrPermMS(ms *dstate.MemberState, channelID int64, needed int) (bool, e
 	return false, nil
 }
 
+// AdminOrPermMember is the same as AdminOrPerm but with a provided member object
+func AdminOrPermMember(gs *dstate.GuildState, member *discordgo.Member, channelID int64, needed int) (bool, error) {
+	ms := dstate.MSFromDGoMember(gs, member)
+	perms, err := ms.Guild.MemberPermissionsMS(true, channelID, ms)
+	if err != nil {
+		return false, err
+	}
+
+	if perms&needed != 0 {
+		return true, nil
+	}
+
+	if perms&discordgo.PermissionManageServer != 0 || perms&discordgo.PermissionAdministrator != 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 // GuildName is a convenience function for getting the name of a guild
 func GuildName(gID int64) (name string) {
 	g := State.Guild(true, gID)
@@ -133,8 +152,8 @@ func SetStatus(streaming, status string) {
 		status = "v" + common.VERSION + " :)"
 	}
 
-	err1 := common.RedisPool.Do(retryableredis.Cmd(nil, "SET", "status_streaming", streaming))
-	err2 := common.RedisPool.Do(retryableredis.Cmd(nil, "SET", "status_name", status))
+	err1 := common.RedisPool.Do(radix.Cmd(nil, "SET", "status_streaming", streaming))
+	err2 := common.RedisPool.Do(radix.Cmd(nil, "SET", "status_name", status))
 	if err1 != nil {
 		logger.WithError(err1).Error("failed setting bot status in redis")
 	}
@@ -251,8 +270,8 @@ func NodeID() string {
 func RefreshStatus(session *discordgo.Session) {
 	var streamingURL string
 	var status string
-	err1 := common.RedisPool.Do(retryableredis.Cmd(&streamingURL, "GET", "status_streaming"))
-	err2 := common.RedisPool.Do(retryableredis.Cmd(&status, "GET", "status_name"))
+	err1 := common.RedisPool.Do(radix.Cmd(&streamingURL, "GET", "status_streaming"))
+	err2 := common.RedisPool.Do(radix.Cmd(&status, "GET", "status_name"))
 	if err1 != nil {
 		logger.WithError(err1).Error("failed retrieiving bot streaming status")
 	}

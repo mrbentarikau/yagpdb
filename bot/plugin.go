@@ -2,12 +2,15 @@ package bot
 
 import (
 	"context"
-	"github.com/jonas747/retryableredis"
-	"github.com/jonas747/yagpdb/bot/models"
-	"github.com/volatiletech/null"
-	"github.com/volatiletech/sqlboiler/queries/qm"
 	"sync"
 	"time"
+
+	"github.com/jonas747/yagpdb/bot/models"
+	"github.com/mediocregopher/radix/v3"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/volatiletech/null"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/dshardorchestrator/v2"
@@ -50,12 +53,16 @@ type ShardMigrationHandler interface {
 	GuildMigrated(guild *dstate.GuildState, toThisSlave bool)
 }
 
-func guildRemoved(guildID int64) {
-	if common.Statsd != nil {
-		common.Statsd.Incr("yagpdb.left_guilds", nil, 1)
-	}
+var metricsLeftGuilds = promauto.NewCounter(prometheus.CounterOpts{
+	Name: "yagpdb_left_guilds",
+	Help: "Guilds yagpdb left",
+})
 
-	common.RedisPool.Do(retryableredis.Cmd(nil, "SREM", "connected_guilds", discordgo.StrID(guildID)))
+func guildRemoved(guildID int64) {
+	metricsLeftGuilds.Inc()
+	commonEventsTotal.With(prometheus.Labels{"type": "Guild Delete"}).Inc()
+
+	common.RedisPool.Do(radix.Cmd(nil, "SREM", "connected_guilds", discordgo.StrID(guildID)))
 
 	_, err := models.JoinedGuilds(qm.Where("id = ?", guildID)).UpdateAll(context.Background(), common.PQ, models.M{
 		"left_at": null.TimeFrom(time.Now()),
