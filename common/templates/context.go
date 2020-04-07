@@ -67,6 +67,7 @@ var (
 		"complexMessageEdit": CreateMessageEdit,
 
 		"formatTime":  tmplFormatTime,
+		"kindOf":      KindOf,
 		"json":        tmplJson,
 		"in":          in,
 		"inFold":      inFold,
