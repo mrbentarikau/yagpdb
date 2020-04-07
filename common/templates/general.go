@@ -825,7 +825,7 @@ func ToByte(from interface{}) []byte {
 	}
 }
 
-func KindOf (input interface{}, flag ...bool) (string, error){
+func tmplKindOf (input interface{}, flag ...bool) (string, error){
 
 	switch len(flag) {
 	
