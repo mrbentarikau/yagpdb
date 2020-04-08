@@ -943,6 +943,27 @@ func ToByte(from interface{}) []byte {
 	}
 }
 
+func tmplKindOf (input interface{}, flag ...bool) (string, error){
+
+	switch len(flag) {
+	
+		case 0:
+			return reflect.ValueOf(input).Kind().String(), nil
+		case 1:
+			if flag[0] {
+				val, isNil := indirect(reflect.ValueOf(input))
+				if isNil || input == nil {
+					return "invalid", nil
+				}
+				return val.Kind().String(), nil
+			}
+			return reflect.ValueOf(input).Kind().String(), nil
+		default:
+			return "", errors.New("Too many flags")
+	}
+
+}
+
 func tmplJson(v interface{}) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
