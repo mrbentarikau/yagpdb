@@ -364,7 +364,7 @@ func (c *Context) SendResponse(content string) (*discordgo.Message, error) {
 			return nil, nil
 		}
 
-		if !bot.BotProbablyHasPermissionGS(true, c.GS, c.CurrentFrame.CS.ID, discordgo.PermissionSendMessages) {
+		if !bot.BotProbablyHasPermissionGS(c.GS, c.CurrentFrame.CS.ID, discordgo.PermissionSendMessages) {
 			// don't bother sending the response if we dont have perms
 			return nil, nil
 		}
