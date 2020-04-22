@@ -209,7 +209,7 @@ func (c *Context) setupBaseData() {
 	}
 
 	if c.CurrentFrame.CS != nil {
-		channel := c.CurrentFrame.CS.Copy(false)
+		channel := CtxChannelFromCS(c.CurrentFrame.CS)
 		c.Data["Channel"] = channel
 		c.Data["channel"] = channel
 	}
@@ -259,7 +259,15 @@ func (c *Context) Execute(source string) (string, error) {
 		}
 		if c.GS != nil {
 			c.Msg.GuildID = c.GS.ID
+
+			member, err := bot.GetMember(c.GS.ID, c.BotUser.ID)
+			if err != nil {
+				return "", errors.WithMessage(err, "ctx.Execute")
+			}
+
+			c.Msg.Member = member.DGoCopy()
 		}
+
 	}
 
 	if c.GS != nil {
