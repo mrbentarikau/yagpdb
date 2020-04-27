@@ -20,12 +20,14 @@ require (
 	github.com/golang/protobuf v1.3.4 // indirect
 	github.com/google/safebrowsing v0.0.0-20190624211811-bbf0d20d26b3
 	github.com/gorilla/schema v1.1.0
+	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/jarcoal/httpmock v1.0.4 // indirect
 	github.com/jinzhu/gorm v1.9.10
 	github.com/jonas747/cardsagainstdiscord v1.0.0
 	github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8
 	github.com/jonas747/dcmd v1.2.2
 	github.com/jonas747/dice v0.0.0-20170619144252-7735f6ee7b69
-	github.com/jonas747/discordgo v1.4.4
+	github.com/jonas747/discordgo v1.4.5-0.20200427151659-739af362c81d
 	github.com/jonas747/dshardorchestrator/v2 v2.0.1-0.20200203181047-f9a62c68f600
 	github.com/jonas747/dstate v1.0.7
 	github.com/jonas747/dutil v0.0.3

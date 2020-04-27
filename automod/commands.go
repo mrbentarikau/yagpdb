@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jonas747/yagpdb/bot/paginatedmessages"
+	"github.com/jonas747/yagpdb/common/featureflags"
 
 	"github.com/jonas747/dcmd"
 	"github.com/jonas747/discordgo"
@@ -44,6 +45,7 @@ func (p *Plugin) AddCommands() {
 
 			data.GS.UserCacheDel(CacheKeyRulesets)
 			data.GS.UserCacheDel(CacheKeyLists)
+			featureflags.MarkGuildDirty(data.GS.ID)
 
 			enabledStr := "enabled"
 			if !ruleset.Enabled {
@@ -116,7 +118,7 @@ func (p *Plugin) AddCommands() {
 				return nil, err
 			}
 
-			if len(entries) < 1 && p!=nil && p.LastResponse != nil { //Dont send No Results error on first execution
+			if len(entries) < 1 && p != nil && p.LastResponse != nil { //Dont send No Results error on first execution
 				return nil, paginatedmessages.ErrNoResults
 			}
 
@@ -243,7 +245,7 @@ func (p *Plugin) AddCommands() {
 				return nil, err
 			}
 
-			if len(listViolations) < 1 && p!=nil && p.LastResponse != nil { //Dont send No Results error on first execution
+			if len(listViolations) < 1 && p != nil && p.LastResponse != nil { //Dont send No Results error on first execution
 				return nil, paginatedmessages.ErrNoResults
 			}
 
