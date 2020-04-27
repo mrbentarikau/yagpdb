@@ -134,7 +134,7 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 		ArgSwitches: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Switch: "d", Default: time.Duration(0), Name: "Duration", Type: &commands.DurationArg{}},
-			&dcmd.ArgDef{Switch: "ddays", Name: "Days", Type: dcmd.Int},
+			&dcmd.ArgDef{Switch: "ddays", Default: 1, Name: "Days", Type: dcmd.Int},
 		},
 		RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
 			config, target, err := MBaseCmd(parsed, parsed.Args[0].Int64())
@@ -147,12 +147,8 @@ var ModerationCommands = []*commands.YAGCommand{
 			if err != nil {
 				return nil, err
 			}
-			
-			ddays := int(config.DefaultBanDeleteDays.Int64)
-			if parsed.Switches["ddays"].Value != nil {
-				ddays = parsed.Switches["ddays"].Int()
-			}
-			err = BanUserWithDuration(config, parsed.GS.ID, parsed.CS, parsed.Msg, parsed.Msg.Author, reason, target, parsed.Switches["d"].Value.(time.Duration), ddays)
+
+			err = BanUserWithDuration(config, parsed.GS.ID, parsed.CS, parsed.Msg, parsed.Msg.Author, reason, target, parsed.Switches["d"].Value.(time.Duration), parsed.Switches["ddays"].Int())
 			if err != nil {
 				return nil, err
 			}
@@ -339,9 +335,7 @@ var ModerationCommands = []*commands.YAGCommand{
 		ArgSwitches: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Switch: "r", Name: "Regex", Type: dcmd.String},
 			&dcmd.ArgDef{Switch: "ma", Default: time.Duration(0), Name: "Max age", Type: &commands.DurationArg{}},
-
 			&dcmd.ArgDef{Switch: "minage", Default: time.Duration(0), Name: "Min age", Type: &commands.DurationArg{}},
-
 			&dcmd.ArgDef{Switch: "i", Name: "Regex case insensitive"},
 			&dcmd.ArgDef{Switch: "nopin", Name: "Ignore pinned messages"},
 		},
@@ -398,7 +392,6 @@ var ModerationCommands = []*commands.YAGCommand{
 			}
 
 			// Check if we have a min age
-
 			minAge := parsed.Switches["minage"].Value.(time.Duration)
 			if minAge != 0 {
 				filtered = true
@@ -520,7 +513,6 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 		RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
 			var err error
-
 			config, _, err := MBaseCmd(parsed, 0)
 			if err != nil {
 				return nil, err
@@ -656,12 +648,10 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 		ArgSwitches: []*dcmd.ArgDef{
 			&dcmd.ArgDef{Switch: "id", Name: "List userIDs"},
-			&dcmd.ArgDef{Switch: "members", Name: "List only members"},
 		},
 		RunFunc: paginatedmessages.PaginatedCommand(0, func(parsed *dcmd.Data, p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
 
 			showUserIDs := false
-			onlyMembers := false
 			config, _, err := MBaseCmd(parsed, 0)
 			if err != nil {
 				return nil, err
@@ -676,16 +666,8 @@ var ModerationCommands = []*commands.YAGCommand{
 				showUserIDs = true
 			}
 
-			if parsed.Switches["members"].Value != nil && parsed.Switches["members"].Value.(bool) {
-				onlyMembers = true
-			}
-
-			if onlyMembers {
-				showUserIDs = false
-			}
-
 			offset := (page - 1) * 15
-			entries, err := TopWarns(parsed.GS.ID, offset, 15, onlyMembers)
+			entries, err := TopWarns(parsed.GS.ID, offset, 15)
 			if err != nil {
 				return nil, err
 			}
@@ -702,8 +684,8 @@ var ModerationCommands = []*commands.YAGCommand{
 			for _, v := range entries {
 				if !showUserIDs {
 					user := v.Username
-					if user == "" && onlyMembers {
-						continue
+					if user == "" {
+						user = "unknown ID:" + strconv.FormatInt(v.UserID, 10)
 					}
 					out += fmt.Sprintf("#%02d: %4d - %s\n", v.Rank, v.WarnCount, user)
 				} else {
@@ -972,12 +954,7 @@ func PaginateWarnings(parsed *dcmd.Data) func(p *paginatedmessages.PaginatedMess
 
 		var err error
 		skip := (page - 1) * 6
-		var userID int64
-		if parsed.Args[0].Int64() == 0 {
-			userID = (commands.ContextMS(parsed.Context())).ID
-		} else {
-			userID = parsed.Args[0].Int64()
-		}
+		userID := parsed.Args[0].Int64()
 		limit := 6
 
 		var result []*WarningModel

@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/jonas747/discordgo"
-	"github.com/jonas747/dstate"
+	//"github.com/jonas747/discordgo"
+	//"github.com/jonas747/dstate"
 	"github.com/jonas747/yagpdb/bot"
 	"github.com/jonas747/yagpdb/common"
 )
@@ -17,10 +17,10 @@ type WarnRankEntry struct {
 	WarnCount int64  `json:"warn_count"`
 }
 
-func TopWarns(guildID int64, offset, limit int, membersOnly bool) ([]*WarnRankEntry, error) {
+func TopWarns(guildID int64, offset, limit int) ([]*WarnRankEntry, error) {
 	const query = `SELECT rank, warn_count, user_id FROM
 	(
-		SELECT RANK() OVER (ORDER BY count(user_id) DESC) AS rank, count(*) as warn_count, user_id
+		SELECT RANK() OVER (ORDER BY count(message) DESC) AS rank, count(*) as warn_count, user_id
 		FROM moderation_warnings WHERE guild_id = $1 group by user_id
 	) AS warns
 	ORDER BY warn_count desc
@@ -37,35 +37,32 @@ func TopWarns(guildID int64, offset, limit int, membersOnly bool) ([]*WarnRankEn
 
 	result := make([]*WarnRankEntry, 0, limit)
 	for rows.Next() {
-		var member []*discordgo.Member
+		//var member []*discordgo.Member
 		var rank int
-		var tmp []*dstate.MemberState
+		//var tmp []*dstate.MemberState
 		var userID int64
 		var warncount int64
 		var err = rows.Scan(&rank, &warncount, &userID)
 		if err != nil {
 			return nil, err
 		}
+
+		/*tmp, err = bot.GetMembers(guildID, userID)
+		if tmp != nil {
+			for _, v := range tmp {
+				member = append(member, v.DGoCopy())
+			}
+		}
 		var username string
-		if membersOnly {
-			tmp, err = bot.GetMembers(guildID, userID)
-			if err == nil {
-				if tmp != nil {
-					for _, v := range tmp {
-						member = append(member, v.DGoCopy())
-					}
-				}
-				for _, m := range member {
-					username = m.User.Username + "##" + m.User.Discriminator
-					break
-				}
-			}
-		} else {
-			userSlice := bot.GetUsers(guildID, userID)
-			for _, u := range userSlice {
-				username = fmt.Sprintf("%s", u)
-				break
-			}
+		for _, m := range member {
+			username = m.User.Username + "#" + m.User.Discriminator
+			break
+		}*/
+		userSlice := bot.GetUsers(guildID, userID)
+		var username string
+		for _, u := range userSlice {
+			username = fmt.Sprintf("%s", u)
+			break
 		}
 
 		result = append(result, &WarnRankEntry{
