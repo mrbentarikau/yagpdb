@@ -23,7 +23,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jarcoal/httpmock v1.0.4 // indirect
 	github.com/jinzhu/gorm v1.9.10
-	github.com/jonas747/cardsagainstdiscord v1.0.0
+	github.com/jonas747/cardsagainstdiscord v1.0.1-0.20200329001347-9ec700c098a5
 	github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8
 	github.com/jonas747/dcmd v1.2.2
 	github.com/jonas747/dice v0.0.0-20170619144252-7735f6ee7b69
@@ -55,8 +55,11 @@ require (
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/tidwall/btree v0.0.0-20191029221954-400434d76274 // indirect
 	github.com/tidwall/buntdb v1.1.0
-	github.com/tidwall/gjson v1.5.0 // indirect
-	github.com/tkuchiki/go-timezone v0.1.4
+	github.com/tidwall/gjson v1.3.2 // indirect
+	github.com/tidwall/grect v0.0.0-20161006141115-ba9a043346eb // indirect
+	github.com/tidwall/rtree v0.0.0-20180113144539-6cd427091e0e // indirect
+	github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 // indirect
+	github.com/tkuchiki/go-timezone v0.1.5-0.20200504234801-f58f9e3b062f
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	github.com/volatiletech/null v8.0.0+incompatible
 	github.com/volatiletech/sqlboiler v3.5.0+incompatible
