@@ -219,6 +219,8 @@ github.com/jinzhu/now v1.0.1/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/
 github.com/jonas747/cardsagainstdiscord v0.0.0-20181204220910-23e761a8e774/go.mod h1:LwIN3YPDHrn3nsra6MaKRYq0Cnx6H6pfE8ugc4fP03M=
 github.com/jonas747/cardsagainstdiscord v1.0.0 h1:UPg1/RyuX4iVSuOzNn1CU9eFWO0ocNUQEITD7ld+c7Y=
 github.com/jonas747/cardsagainstdiscord v1.0.0/go.mod h1:y11G2XTZehiSHDdy8w/8IVQsY3ilvdLmNshuo1TSEek=
+github.com/jonas747/cardsagainstdiscord v1.0.1-0.20200329001347-9ec700c098a5 h1:7WPFTKW22vUIEVN4YXZP611SkWF7GxFOdEcaChIXO3k=
+github.com/jonas747/cardsagainstdiscord v1.0.1-0.20200329001347-9ec700c098a5/go.mod h1:y11G2XTZehiSHDdy8w/8IVQsY3ilvdLmNshuo1TSEek=
 github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8 h1:k/3mvr7ImDZ8Ig/qcLVnvNSW99wlkbVyPDv4erwSQPQ=
 github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8/go.mod h1:rxjYX9OJU81unMxQDHChU/lAiOhlY9MV+faPX/NmwLk=
 github.com/jonas747/dcmd v1.1.0 h1:zn5qVNxyz08cgAdjvAGoG2WwY3GbxnzImRynV0Atja0=
@@ -447,7 +449,8 @@ github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 h1:Otn9S136ELckZ
 github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563/go.mod h1:mLqSmt7Dv/CNneF2wfcChfN1rvapyQr01LGKnKex0DQ=
 github.com/tkuchiki/go-timezone v0.1.4 h1:bqdCyQmMPO2vxCobv9nqHWgmkMksGZ/tNhROr2DKxPI=
 github.com/tkuchiki/go-timezone v0.1.4/go.mod h1:b1Ean9v2UXtxSq4TZF0i/TU9NuoWa9hOzOKoGCV2zqY=
-github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
+github.com/tkuchiki/go-timezone v0.1.5-0.20200504234801-f58f9e3b062f h1:vGOH941I3HVLM4xauL2IgdOrPoahBD+JhBohYRMOVPQ=
+github.com/tkuchiki/go-timezone v0.1.5-0.20200504234801-f58f9e3b062f/go.mod h1:b1Ean9v2UXtxSq4TZF0i/TU9NuoWa9hOzOKoGCV2zqY=
 github.com/ugorji/go v1.1.4 h1:j4s+tAvLfL3bZyefP2SEWmhBzmuIlH/eqNuPdFPgngw=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/viant/assertly v0.4.8/go.mod h1:aGifi++jvCrUaklKEKT0BU95igDNaqkvz+49uaYMPRU=
