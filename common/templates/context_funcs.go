@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"build"
+	"sort"
 
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/dstate"
