@@ -1274,7 +1274,7 @@ func (c *Context) tmplSort (slice []interface{}, sortargs ...interface{}) (inter
 		}
 
 		numberSlice := make([]interface{}, 0)
-		stringSlice := make([]string, 0)
+		stringSlice := make([]interface{}, 0)
 		timeSlice := make([]interface{}, 0)
 		csliceSlice := make([]interface{}, 0)
 		mapSlice := make([]interface{}, 0)
@@ -1306,13 +1306,13 @@ func (c *Context) tmplSort (slice []interface{}, sortargs ...interface{}) (inter
 
 		if sa.Reverse {
 			sort.Slice(numberSlice, func(i, j int) bool { return ToFloat64(numberSlice[i]) > ToFloat64(numberSlice[j]) })
-			sort.Sort(sort.Reverse(sort.StringSlice(stringSlice)))
+			sort.Slice(stringSlice, func(i, j int) bool { return getString(stringSlice[i]) > getString(stringSlice[j]) })
 			sort.Slice(timeSlice, func(i, j int) bool { return timeSlice[j].(time.Time).Before(timeSlice[i].(time.Time)) })
 			sort.Slice(csliceSlice, func(i, j int) bool { return getLen(csliceSlice[i]) > getLen(csliceSlice[j]) })
 			sort.Slice(mapSlice, func(i, j int) bool { return getLen(mapSlice[i]) > getLen(mapSlice[j]) })
 		} else {
 			sort.Slice(numberSlice, func(i, j int) bool { return ToFloat64(numberSlice[i]) < ToFloat64(numberSlice[j]) })
-			sort.Strings(stringSlice)
+			sort.Slice(stringSlice, func(i, j int) bool { return getString(stringSlice[i]) < getString(stringSlice[j]) })
 			sort.Slice(timeSlice, func(i, j int) bool { return timeSlice[i].(time.Time).Before(timeSlice[j].(time.Time)) })
 			sort.Slice(csliceSlice, func(i, j int) bool { return getLen(csliceSlice[i]) < getLen(csliceSlice[j]) })
 			sort.Slice(mapSlice, func(i, j int) bool { return getLen(mapSlice[i]) < getLen(mapSlice[j]) })
@@ -1347,29 +1347,12 @@ func (c *Context) tmplSort (slice []interface{}, sortargs ...interface{}) (inter
 				}
 			}
 		} else {
-			for _, v := range numberSlice {
-				outputSlice = append(outputSlice, v)
-			}
-
-			for _, v := range stringSlice {
-				outputSlice = append(outputSlice, v)
-			}
-
-			for _, v := range defaultSlice {
-				outputSlice = append(outputSlice, v)
-			}
-
-			for _, v := range timeSlice {
-				outputSlice = append(outputSlice, v)
-			}
-
-			for _, v := range csliceSlice {
-				outputSlice = append(outputSlice, v)
-			}
-
-			for _, v := range mapSlice {
-				outputSlice = append(outputSlice, v)
-			}
+			outputSlice = append(outputSlice, numberSlice...)
+			outputSlice = append(outputSlice, stringSlice...)
+			outputSlice = append(outputSlice, timeSlice...)
+			outputSlice = append(outputSlice, csliceSlice...)
+			outputSlice = append(outputSlice, mapSlice...)
+			outputSlice = append(outputSlice, defaultSlice...)
 		}
 
 		return outputSlice, nil
@@ -1387,5 +1370,15 @@ func getLen(from interface{}) int {
 		return v.Len()
 	default:
 		return 0
+	}
+}
+
+func getString(from interface{}) string {
+	v := reflect.ValueOf(from)
+	switch v.Kind() {
+	case reflect.String:
+		return fmt.Sprintln(from)
+	default:
+		return ""
 	}
 }
