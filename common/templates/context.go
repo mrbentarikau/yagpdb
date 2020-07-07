@@ -526,8 +526,7 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["onlineCountBots"] = c.tmplOnlineCountBots
 	c.ContextFuncs["editNickname"] = c.tmplEditNickname
 	
-	c.ContextFuncs["sortAsc"] = c.tmplSortAsc
-	c.ContextFuncs["sortDesc"] = c.tmplSortDesc
+	c.ContextFuncs["sort"] = c.tmplSort
 }
 
 type limitedWriter struct {
