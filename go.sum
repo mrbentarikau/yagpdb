@@ -252,6 +252,7 @@ github.com/jonas747/discordgo v1.5.1-0.20200617121435-1a16211c63ab h1:8coiYua1NY
 github.com/jonas747/discordgo v1.5.1-0.20200617121435-1a16211c63ab/go.mod h1:0fBo932PSr5ti/g3atypis6nWeLiNK9AL2hN7d+d6oc=
 github.com/jonas747/discordgo v1.5.1-0.20200624011214-9563fa0b9e8b h1:Vi04Pu532Q817adJmunhb+ssk8d5ju9ak36TCQZuK20=
 github.com/jonas747/discordgo v1.5.1-0.20200624011214-9563fa0b9e8b/go.mod h1:0fBo932PSr5ti/g3atypis6nWeLiNK9AL2hN7d+d6oc=
+github.com/jonas747/dshardorchestrator v0.0.0-20190717204625-752c847fa039/go.mod h1:Cs2ax5vvTtpgy2n8wp5zpBhd6A19ThLykp21XXSsrU0=
 github.com/jonas747/dshardorchestrator v0.1.0 h1:3/v+lx0gLupm7/VZr7wbfvUGhpxvuNC5JHaS+OnWjCc=
 github.com/jonas747/dshardorchestrator v0.1.0/go.mod h1:ZlA6h9kj2H5q2aQkZgBiROp8zpIjIUMJQ3SOpVdWYfQ=
 github.com/jonas747/dshardorchestrator/v2 v2.0.1-0.20200203181047-f9a62c68f600 h1:Hn7banyRdBGcKdNiNOZV2cu9duoBuk8C7GHalNApu2o=
