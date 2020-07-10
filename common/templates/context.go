@@ -77,9 +77,9 @@ var (
 		"cslice":             CreateSlice,
 		"complexMessage":     CreateMessageSend,
 		"complexMessageEdit": CreateMessageEdit,
+		"kindOf":             KindOf,
 
 		"formatTime":  tmplFormatTime,
-		"kindOf":      tmplKindOf,
 		"json":        tmplJson,
 		"in":          in,
 		"inFold":      inFold,
@@ -501,6 +501,9 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["addRoleID"] = c.tmplAddRoleID
 	c.ContextFuncs["removeRoleID"] = c.tmplRemoveRoleID
 
+	c.ContextFuncs["addRoleName"] = c.tmplAddRoleName
+	c.ContextFuncs["removeRoleName"] = c.tmplRemoveRoleName
+
 	c.ContextFuncs["giveRoleID"] = c.tmplGiveRoleID
 	c.ContextFuncs["giveRoleName"] = c.tmplGiveRoleName
 
@@ -581,6 +584,22 @@ func MaybeScheduledDeleteMessage(guildID, channelID, messageID int64, delaySecon
 			bot.MessageDeleteQueue.DeleteMessages(guildID, channelID, messageID)
 		}()
 	}
+}
+
+type Dict map[interface{}]interface{}
+
+func (d Dict) Set(key interface{}, value interface{}) string {
+	d[key] = value
+	return ""
+}
+
+func (d Dict) Get(key interface{}) interface{} {
+	return d[key]
+}
+
+func (d Dict) Del(key interface{}) string {
+	delete(d, key)
+	return ""
 }
 
 type SDict map[string]interface{}

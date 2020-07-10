@@ -22,7 +22,7 @@ import (
 // dictionary creates a map[string]interface{} from the given parameters by
 // walking the parameters and treating them as key-value pairs.  The number
 // of parameters must be even.
-func Dictionary(values ...interface{}) (map[interface{}]interface{}, error) {
+func Dictionary(values ...interface{}) (Dict, error) {
 	if len(values)%2 != 0 {
 		return nil, errors.New("invalid dict call")
 	}
@@ -33,7 +33,7 @@ func Dictionary(values ...interface{}) (map[interface{}]interface{}, error) {
 		dict[key] = values[i+1]
 	}
 
-	return dict, nil
+	return Dict(dict), nil
 }
 
 func StringKeyDictionary(values ...interface{}) (SDict, error) {
@@ -88,7 +88,27 @@ func StringKeyDictionary(values ...interface{}) (SDict, error) {
 	return SDict(dict), nil
 }
 
-func StructToSdict (value interface{}) (SDict, error) {
+func KindOf(input interface{}, flag ...bool) (string, error) { //flag used only for indirect vs direct for now.
+
+	switch len(flag) {
+
+	case 0:
+		return reflect.ValueOf(input).Kind().String(), nil
+	case 1:
+		if flag[0] {
+			val, isNil := indirect(reflect.ValueOf(input))
+			if isNil || input == nil {
+				return "invalid", nil
+			}
+			return val.Kind().String(), nil
+		}
+		return reflect.ValueOf(input).Kind().String(), nil
+	default:
+		return "", errors.New("Too many flags")
+	}
+}
+
+func StructToSdict(value interface{}) (SDict, error) {
 
 	val, isNil := indirect(reflect.ValueOf(value))
 	typeOfS := val.Type()
@@ -101,14 +121,14 @@ func StructToSdict (value interface{}) (SDict, error) {
 	}
 
 	fields := make(map[string]interface{})
-	for i := 0 ; i < val.NumField() ; i++ {
+	for i := 0; i < val.NumField(); i++ {
 		curr := val.Field(i)
 		if curr.CanSet() {
 			fields[typeOfS.Field(i).Name] = curr.Interface()
 		}
 	}
-	return SDict(fields), nil		
-			
+	return SDict(fields), nil
+
 }
 
 func CreateSlice(values ...interface{}) (Slice, error) {
@@ -609,6 +629,10 @@ func tmplHumanizeThousands(input interface{}) string {
 	var f1, f2 string
 
 	i := tmplToInt(input)
+	if i < 0 {
+		i = i * -1
+		f2 = "-"
+	}
 	str := strconv.Itoa(i)
 
 	idx := 0
@@ -881,6 +905,8 @@ func ToString(from interface{}) string {
 		return string(t)
 	case []byte:
 		return string(t)
+	case fmt.Stringer:
+		return t.String()
 	case string:
 		return t
 	default:
@@ -966,23 +992,23 @@ func ToByte(from interface{}) []byte {
 	}
 }
 
-func tmplKindOf (input interface{}, flag ...bool) (string, error){
+func tmplKindOf(input interface{}, flag ...bool) (string, error) {
 
 	switch len(flag) {
-	
-		case 0:
-			return reflect.ValueOf(input).Kind().String(), nil
-		case 1:
-			if flag[0] {
-				val, isNil := indirect(reflect.ValueOf(input))
-				if isNil || input == nil {
-					return "invalid", nil
-				}
-				return val.Kind().String(), nil
+
+	case 0:
+		return reflect.ValueOf(input).Kind().String(), nil
+	case 1:
+		if flag[0] {
+			val, isNil := indirect(reflect.ValueOf(input))
+			if isNil || input == nil {
+				return "invalid", nil
 			}
-			return reflect.ValueOf(input).Kind().String(), nil
-		default:
-			return "", errors.New("Too many flags")
+			return val.Kind().String(), nil
+		}
+		return reflect.ValueOf(input).Kind().String(), nil
+	default:
+		return "", errors.New("Too many flags")
 	}
 
 }
