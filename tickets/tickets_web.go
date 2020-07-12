@@ -3,13 +3,14 @@ package tickets
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
+	"net/http"
+
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/tickets/models"
 	"github.com/jonas747/yagpdb/web"
 	"github.com/volatiletech/sqlboiler/boil"
 	"goji.io/pat"
-	"html/template"
-	"net/http"
 )
 
 type FormData struct {
@@ -99,7 +100,7 @@ func (p *Plugin) LoadServerHomeWidget(w http.ResponseWriter, r *http.Request) (w
 	}
 
 	enabled := false
-	if settings != nil {
+	if settings.Enabled {
 		enabled = true
 	}
 
