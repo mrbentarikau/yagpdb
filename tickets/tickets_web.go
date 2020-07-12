@@ -95,18 +95,25 @@ func (p *Plugin) LoadServerHomeWidget(w http.ResponseWriter, r *http.Request) (w
 	activeGuild, templateData := web.GetBaseCPContextData(r.Context())
 
 	settings, err := models.FindTicketConfigG(r.Context(), activeGuild.ID)
-	if err != nil && err != sql.ErrNoRows {
-		return templateData, err
+	if err != nil {
+		if err == sql.ErrNoRows {
+			settings = &models.TicketConfig{
+				GuildID: activeGuild.ID,
+			}
+		} else {
+			return templateData, err
+		}
 	}
 
-	enabled := false
+	/*enabled := false
 	if settings.Enabled {
 		enabled = true
-	}
+	}*/
 
 	templateData["WidgetTitle"] = "Tickets"
 	templateData["SettingsPath"] = "/tickets/settings"
-	if enabled {
+
+	if settings.Enabled {
 		templateData["WidgetEnabled"] = true
 	} else {
 		templateData["WidgetDisabled"] = true
@@ -116,7 +123,7 @@ func (p *Plugin) LoadServerHomeWidget(w http.ResponseWriter, r *http.Request) (w
 	<li>Tickets enabled: %s</li>
  </ul>`
 
-	templateData["WidgetBody"] = template.HTML(fmt.Sprintf(format, web.EnabledDisabledSpanStatus(enabled)))
+	templateData["WidgetBody"] = template.HTML(fmt.Sprintf(format, web.EnabledDisabledSpanStatus(settings.Enabled)))
 
 	return templateData, nil
 }
