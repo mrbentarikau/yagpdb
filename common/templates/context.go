@@ -486,7 +486,7 @@ func baseContextFuncs(c *Context) {
 
 	c.ContextFuncs["addRoleID"] = c.tmplAddRoleID
 	c.ContextFuncs["removeRoleID"] = c.tmplRemoveRoleID
-	
+
 	c.ContextFuncs["addRoleName"] = c.tmplAddRoleName
 	c.ContextFuncs["removeRoleName"] = c.tmplRemoveRoleName
 
@@ -525,7 +525,7 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["onlineCount"] = c.tmplOnlineCount
 	c.ContextFuncs["onlineCountBots"] = c.tmplOnlineCountBots
 	c.ContextFuncs["editNickname"] = c.tmplEditNickname
-	
+
 	c.ContextFuncs["sort"] = c.tmplSort
 }
 
@@ -577,17 +577,17 @@ func MaybeScheduledDeleteMessage(guildID, channelID, messageID int64, delaySecon
 type Dict map[interface{}]interface{}
 
 func (d Dict) Set(key interface{}, value interface{}) string {
-    d[key] = value
-    return ""
+	d[key] = value
+	return ""
 }
 
 func (d Dict) Get(key interface{}) interface{} {
-    return d[key]
+	return d[key]
 }
 
 func (d Dict) Del(key interface{}) string {
-    delete(d, key)
-    return ""
+	delete(d, key)
+	return ""
 }
 
 type SDict map[string]interface{}

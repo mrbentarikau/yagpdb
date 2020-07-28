@@ -2,15 +2,15 @@ package templates
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"sort"
-	"encoding/json"
 
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/dstate"
@@ -714,33 +714,33 @@ func (c *Context) tmplAddRoleID(role interface{}) (string, error) {
 }
 
 func (c *Context) tmplAddRoleName(name string) (string, error) {
-    if c.IncreaseCheckGenericAPICall() {
-        return "", ErrTooManyAPICalls
-    }
+	if c.IncreaseCheckGenericAPICall() {
+		return "", ErrTooManyAPICalls
+	}
 
-    if c.MS == nil {
-        return "", nil
-    }
+	if c.MS == nil {
+		return "", nil
+	}
 
-    role := int64(0)
-    c.GS.RLock()
-    for _, r := range c.GS.Guild.Roles {
-        if strings.EqualFold(r.Name, name) {
-            role = r.ID    
-            break
-        }
-    }
-    c.GS.RUnlock()
+	role := int64(0)
+	c.GS.RLock()
+	for _, r := range c.GS.Guild.Roles {
+		if strings.EqualFold(r.Name, name) {
+			role = r.ID
+			break
+		}
+	}
+	c.GS.RUnlock()
 
-    if role == 0 {
-        return "", errors.New("No Role with name " + name + " found")
-    }
+	if role == 0 {
+		return "", errors.New("No Role with name " + name + " found")
+	}
 
-    if err := common.AddRoleDS(c.MS, role); err != nil {
-        return "", err
-    }
-    
-    return "", nil
+	if err := common.AddRoleDS(c.MS, role); err != nil {
+		return "", err
+	}
+
+	return "", nil
 }
 
 func (c *Context) tmplRemoveRoleID(role interface{}, optionalArgs ...interface{}) (string, error) {
@@ -772,42 +772,42 @@ func (c *Context) tmplRemoveRoleID(role interface{}, optionalArgs ...interface{}
 }
 
 func (c *Context) tmplRemoveRoleName(name string, optionalArgs ...interface{}) (string, error) {
-    if c.IncreaseCheckGenericAPICall() {
-        return "", ErrTooManyAPICalls
-    }
+	if c.IncreaseCheckGenericAPICall() {
+		return "", ErrTooManyAPICalls
+	}
 
-    delay := 0
-    if len(optionalArgs) > 0 {
-        delay = tmplToInt(optionalArgs[0])
-    }
+	delay := 0
+	if len(optionalArgs) > 0 {
+		delay = tmplToInt(optionalArgs[0])
+	}
 
-    if c.MS == nil {
-        return "", nil
-    }
+	if c.MS == nil {
+		return "", nil
+	}
 
-    role := int64(0)
-    c.GS.RLock()
-    for _, r := range c.GS.Guild.Roles {
-        if strings.EqualFold(r.Name, name) {
-            role = r.ID
-            break
-        }
-    }
-    c.GS.RUnlock()
+	role := int64(0)
+	c.GS.RLock()
+	for _, r := range c.GS.Guild.Roles {
+		if strings.EqualFold(r.Name, name) {
+			role = r.ID
+			break
+		}
+	}
+	c.GS.RUnlock()
 
-    if role == 0 {
-        return "", errors.New("No Role with name " + name + " found")
-    }
+	if role == 0 {
+		return "", errors.New("No Role with name " + name + " found")
+	}
 
-    if delay > 0 {
-        scheduledevents2.ScheduleRemoveRole(context.Background(), c.GS.ID, c.MS.ID, role, time.Now().Add(time.Second*time.Duration(delay)))
-    } else {
-        if err := common.RemoveRoleDS(c.MS, role) ; err != nil {
-              return "", err
-        }
-    }
+	if delay > 0 {
+		scheduledevents2.ScheduleRemoveRole(context.Background(), c.GS.ID, c.MS.ID, role, time.Now().Add(time.Second*time.Duration(delay)))
+	} else {
+		if err := common.RemoveRoleDS(c.MS, role); err != nil {
+			return "", err
+		}
+	}
 
-    return "", nil
+	return "", nil
 }
 
 func (c *Context) tmplDelResponse(args ...interface{}) string {
@@ -1233,12 +1233,12 @@ func (c *Context) tmplEditNickname(Nickname string) (string, error) {
 }
 
 type SortArgs struct {
-	Reverse		bool	`json:"reverse"`
-	Subslices	bool	`json:"subslices"`
-	Emptyslices	bool	`json:"emptyslices"`
+	Reverse     bool `json:"reverse"`
+	Subslices   bool `json:"subslices"`
+	Emptyslices bool `json:"emptyslices"`
 }
 
-func (c *Context) tmplSort (slice []interface{}, sortargs ...interface{}) (interface{}, error) {
+func (c *Context) tmplSort(slice []interface{}, sortargs ...interface{}) (interface{}, error) {
 	if c.IncreaseCheckCallCounterPremium("sortfuncs", 1, 3) {
 		return "", ErrTooManyCalls
 	}
