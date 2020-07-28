@@ -562,34 +562,20 @@ func (c *Context) tmplGiveRoleName(target interface{}, name string) string {
 		return ""
 	}
 
-	role := int64(0)
-	c.GS.RLock()
-	for _, r := range c.GS.Guild.Roles {
-		if strings.EqualFold(r.Name, name) {
-			role = r.ID
+	role := c.findRoleByName(name)
+	if role == nil {
+		return "no role by the name of " + name + " found"
+	}
 
-			// Maybe save a api request
-			ms := c.GS.Member(false, targetID)
-			hasRole := false
-			if ms != nil {
-				hasRole = common.ContainsInt64Slice(ms.Roles, role)
-			}
-
-			if hasRole {
-				c.GS.RUnlock()
-				return ""
-			}
-
-			break
+	// Maybe save a api request
+	ms := c.GS.Member(false, targetID)
+	if ms != nil {
+		if common.ContainsInt64Slice(ms.Roles, role.ID) {
+			return ""
 		}
 	}
-	c.GS.RUnlock()
 
-	if role == 0 {
-		return ""
-	}
-
-	common.BotSession.GuildMemberRoleAdd(c.GS.ID, targetID, role)
+	common.BotSession.GuildMemberRoleAdd(c.GS.ID, targetID, role.ID)
 
 	return ""
 }
@@ -785,17 +771,8 @@ func (c *Context) tmplRemoveRoleName(name string, optionalArgs ...interface{}) (
 		return "", nil
 	}
 
-	role := int64(0)
-	c.GS.RLock()
-	for _, r := range c.GS.Guild.Roles {
-		if strings.EqualFold(r.Name, name) {
-			role = r.ID
-			break
-		}
-	}
-	c.GS.RUnlock()
-
-	if role == 0 {
+	role := c.findRoleByName(name)
+	if role == nil {
 		return "", errors.New("No Role with name " + name + " found")
 	}
 
@@ -808,6 +785,19 @@ func (c *Context) tmplRemoveRoleName(name string, optionalArgs ...interface{}) (
 	}
 
 	return "", nil
+}
+
+func (c *Context) findRoleByName(name string) *discordgo.Role {
+	c.GS.RLock()
+	defer c.GS.RUnlock()
+
+	for _, r := range c.GS.Guild.Roles {
+		if strings.EqualFold(r.Name, name) {
+			return r
+		}
+	}
+
+	return nil
 }
 
 func (c *Context) tmplDelResponse(args ...interface{}) string {

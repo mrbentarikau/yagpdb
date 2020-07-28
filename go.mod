@@ -13,7 +13,6 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/certifi/gocertifi v0.0.0-20190905060710-a5e0173ced67 // indirect
 	github.com/denisenkom/go-mssqldb v0.0.0-20200206145737-bbfc9a55622e // indirect
-	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f
 	github.com/dghubble/oauth1 v0.6.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/dpatrie/urbandictionary v0.0.0-20151214192647-3b38cbf4cb81
@@ -29,15 +28,17 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jarcoal/httpmock v1.0.4 // indirect
 	github.com/jinzhu/gorm v1.9.10
-	github.com/jonas747/cardsagainstdiscord v1.1.0
+	github.com/jmoiron/sqlx v1.2.0
+	github.com/jonas747/cardsagainstdiscord v1.1.1-0.20200617121715-2c969a853358
 	github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8
 	github.com/jonas747/dcmd v1.2.3
 	github.com/jonas747/dice v0.0.0-20170619144252-7735f6ee7b69
-	github.com/jonas747/discordgo v1.5.1-0.20200617121435-1a16211c63ab
-	github.com/jonas747/dshardorchestrator/v2 v2.0.1-0.20200203181047-f9a62c68f600
+	github.com/jonas747/discordgo v1.5.1-0.20200724201431-6c9b37161622
+	github.com/jonas747/dshardorchestrator/v2 v2.0.1
 	github.com/jonas747/dstate v1.0.7
 	github.com/jonas747/dutil v0.0.3
 	github.com/jonas747/go-reddit v0.1.2
+	github.com/jonas747/go-twitter v0.0.0-20200706234916-1d17060b92bc
 	github.com/jonas747/jdshardmanager v1.0.1
 	github.com/jonas747/ogg v0.0.0-20161220051205-b4f6f4cf3757 // indirect
 	github.com/jonas747/template v1.1.2
@@ -47,6 +48,7 @@ require (
 	github.com/karlseguin/rcache v1.0.1
 	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481
 	github.com/lunixbochs/vtclean v1.0.0
+	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mediocregopher/radix/v3 v3.5.0
 	github.com/microcosm-cc/bluemonday v1.0.1
 	github.com/miolini/datacounter v0.0.0-20190724021726-aa48df3a02c1
