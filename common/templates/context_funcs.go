@@ -777,9 +777,9 @@ func (c *Context) tmplRemoveRoleName(name string, optionalArgs ...interface{}) (
 	}
 
 	if delay > 0 {
-		scheduledevents2.ScheduleRemoveRole(context.Background(), c.GS.ID, c.MS.ID, role, time.Now().Add(time.Second*time.Duration(delay)))
+		scheduledevents2.ScheduleRemoveRole(context.Background(), c.GS.ID, c.MS.ID, role.ID, time.Now().Add(time.Second*time.Duration(delay)))
 	} else {
-		if err := common.RemoveRoleDS(c.MS, role); err != nil {
+		if err := common.RemoveRoleDS(c.MS, role.ID); err != nil {
 			return "", err
 		}
 	}
