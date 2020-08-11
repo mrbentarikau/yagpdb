@@ -14,6 +14,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unsafe"
 
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/yagpdb/bot/botrest"
@@ -133,6 +134,7 @@ func HandleSelectServer(w http.ResponseWriter, r *http.Request) interface{} {
 
 	posts := discordblog.GetNewestPosts(10)
 	tmpl["Posts"] = posts
+	tmpl["RedditQuotes"] = *(*string)(atomic.LoadPointer(redditQuote))
 
 	return tmpl
 }
@@ -422,6 +424,24 @@ func pollCCsRan() {
 	}
 }
 
+var redditQuote = new(unsafe.Pointer)
+
+func pollRedditQuotes() {
+	t := time.NewTicker(time.Hour)
+	for {
+		quote, err := ioutil.ReadFile("dailyredditquote")
+		if err != nil {
+			logger.WithError(err).Error("failed reading dailyredditquote file")
+			return
+		} else {
+			atomic.StorePointer(redditQuote, unsafe.Pointer(&quote))
+		}
+
+		<-t.C
+	}
+
+}
+
 func handleRobotsTXT(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`User-agent: *
 Disallow: /manage/
@@ -431,7 +451,7 @@ Disallow: /manage/
 func handleKeyBaseTXT(w http.ResponseWriter, r *http.Request) {
 	f, err := ioutil.ReadFile("keybase.txt")
 	if err != nil {
-		logger.WithError(err).Error("failed reading ads.txt file")
+		logger.WithError(err).Error("failed reading keybase.txt file")
 		return
 	}
 
