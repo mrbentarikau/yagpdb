@@ -23,5 +23,6 @@ cmd/yagpdb/static/rebannens/
 *.agent
 *.exe
 keybase.txt
+dailyredditquote
 .idea
 .vscode

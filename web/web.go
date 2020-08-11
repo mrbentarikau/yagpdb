@@ -151,6 +151,7 @@ func Run() {
 	// Start monitoring the bot
 	go pollCommandsRan()
 	go pollCCsRan()
+	go pollRedditQuotes()
 
 	blogChannel := confAnnouncementsChannel.GetInt()
 	if blogChannel != 0 {
