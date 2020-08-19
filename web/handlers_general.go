@@ -19,6 +19,7 @@ import (
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/yagpdb/bot/botrest"
 	"github.com/jonas747/yagpdb/common"
+	"github.com/jonas747/yagpdb/common/cplogs"
 	"github.com/jonas747/yagpdb/common/models"
 	"github.com/jonas747/yagpdb/common/patreon"
 	"github.com/jonas747/yagpdb/web/discordblog"
@@ -102,7 +103,7 @@ func HandleServerHome(w http.ResponseWriter, r *http.Request) (TemplateData, err
 func HandleCPLogs(w http.ResponseWriter, r *http.Request) interface{} {
 	activeGuild, templateData := GetBaseCPContextData(r.Context())
 
-	logs, err := common.GetCPLogEntries(activeGuild.ID)
+	logs, err := cplogs.GetEntries(activeGuild.ID, 100, 0)
 	if err != nil {
 		templateData.AddAlerts(ErrorAlert("Failed retrieving logs", err))
 	} else {
@@ -539,6 +540,8 @@ func HandlePostCoreSettings(w http.ResponseWriter, r *http.Request) (TemplateDat
 	}
 
 	templateData["CoreConfig"] = m
+
+	go cplogs.RetryAddEntry(NewLogEntryFromContext(r.Context(), panelLogKeyCore))
 
 	return templateData, nil
 }
