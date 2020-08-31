@@ -15,6 +15,8 @@ github.com/AYLIEN/aylien_textapi_go v0.6.0 h1:iKLMoiCqfNCkFdRyQf2RXUvyPZTRWiIIJj
 github.com/AYLIEN/aylien_textapi_go v0.6.0/go.mod h1:cUuuBfHn5Q0/7Fw8P6D9JDWQLsoAV0nAqFPa+bT6K9I=
 github.com/AlekSi/pointer v1.0.0 h1:KWCWzsvFxNLcmM5XmiqHsGTTsuwZMsLFwWF9Y+//bNE=
 github.com/AlekSi/pointer v1.0.0/go.mod h1:1kjywbfcPFCmncIxtk6fIEub6LKrfMz3gc5QKVOSOA8=
+github.com/AlekSi/pointer v1.1.0 h1:SSDMPcXD9jSl8FPy9cRzoRaMJtm9g9ggGTxecRUbQoI=
+github.com/AlekSi/pointer v1.1.0/go.mod h1:y7BvfRI3wXPWKXEBhU71nbnIEEZX0QTSB2Bj48UJIZE=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
@@ -288,9 +290,11 @@ github.com/jonas747/retryableredis v1.0.2/go.mod h1:2cmsM+Ipi0IDpdq3lHPmgedpfHXw
 github.com/jonas747/template v0.0.0-20190826212002-f0fa841287d7/go.mod h1:uh4OTJv2hiDAA5vwpdI5D1fYdmXFZ7pReNMOad/yNes=
 github.com/jonas747/template v1.1.2 h1:eCAU81MpcC0gij9NitXt+ECCf436OxklvJA+CHWjqxA=
 github.com/jonas747/template v1.1.2/go.mod h1:gAPqCURcbB4rsYIzAsvcZyyflNZHNG6FQcUZBtLUzXg=
-github.com/jonas747/yageconomy v0.0.0-20190912200808-750548ca6527/go.mod h1:oIR/hAzqgWMUJsG9lgfyHT/WKVDQVORmphDR1LBEQsU=
-github.com/jonas747/yagpdb v1.20.7/go.mod h1:AVJYEJSzdlTlRXHgJqVdtci1gCn7b/98ctOMfcVGHh4=
-github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
+github.com/jonas747/when v0.0.0-20190311101825-c3b538a97254 h1:JYoQR67E1vv1WGoeW8DkdFs7vrIEe/5wP+qJItd5tUE=
+github.com/jonas747/when v0.0.0-20190311101825-c3b538a97254/go.mod h1:DPucAeQGDPUzYUt+NaWw6qsF5SFapWWToxEiVDh2aV0=
+github.com/jonas747/when v0.0.2 h1:71sgEPQ/3SlwcNHOblVj/RUCWqHkurK3umlRxNpbOFs=
+github.com/jonas747/when v0.0.2/go.mod h1:FcMTsyR9FGTdWt9RboWas5IJ+i5NlozhLtNkCRYC3+A=
+github.com/json-iterator/go v1.1.6 h1:MrUvLMLTMxbqFJ9kzlvat/rYZqZnW3u4wkLzWTaFwKs=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
