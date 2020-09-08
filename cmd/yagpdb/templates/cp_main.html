@@ -146,7 +146,7 @@
 
 {{/*Displays alerts*/}}
 {{define "cp_alerts"}}
-<script>
+<!--<script>
 $(function(){
     showAlerts("{{json .Alerts}}");
     $.getJSON("https://srhpyqt94yxb.statuspage.io/api/v2/incidents/unresolved.json", function(data) {
@@ -157,7 +157,7 @@ $(function(){
         }
     });
 })
-</script>
+</script>-->
 <div id="alerts">
     {{if .Alerts}}
     <div class="row">
