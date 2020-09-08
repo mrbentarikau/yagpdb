@@ -27,6 +27,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/listroles"
 	"github.com/jonas747/yagpdb/stdcommands/memberfetcher"
 	"github.com/jonas747/yagpdb/stdcommands/mentionrole"
+	"github.com/jonas747/yagpdb/stdcommands/openweathermap"
 	"github.com/jonas747/yagpdb/stdcommands/ping"
 	"github.com/jonas747/yagpdb/stdcommands/poll"
 	"github.com/jonas747/yagpdb/stdcommands/roll"
@@ -74,6 +75,7 @@ func (p *Plugin) AddCommands() {
 		// Standard
 		define.Command,
 		weather.Command,
+		openweathermap.Command,
 		calc.Command,
 		topic.Command,
 		catfact.Command,
@@ -94,7 +96,7 @@ func (p *Plugin) AddCommands() {
 		topgames.Command,
 		xkcd.Command,
 		howlongtobeat.Command,
-		
+
 		// Maintenance
 		stateinfo.Command,
 		leaveserver.Command,
