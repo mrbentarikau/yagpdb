@@ -428,11 +428,12 @@ const (
 )
 
 type SidebarItem struct {
-	Name     string
-	URL      string
-	Icon     string
-	New      bool
-	External bool
+	Name            string
+	URL             string
+	Icon            string
+	CustomIconImage string
+	New             bool
+	External        bool
 }
 
 var sideBarItems = make(map[string][]*SidebarItem)

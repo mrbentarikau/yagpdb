@@ -96,7 +96,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> 
 
         <script>
         $(function(){
@@ -198,13 +198,7 @@ $(function(){
                         </a>
                     </li>
                     {{range (index .SidebarItems "Top")}}
-                    <li>
-                        <a class="nav-link" {{if not .External}}data-partial-load="true"{{else}}target="_blank"{{end}} href="{{if not .External}}/manage/{{$ag.ID}}/{{.URL}}{{else}}{{.URL}}{{end}}">
-                            {{if .Icon}}<i class="{{.Icon}}" aria-hidden="true"></i>{{end}}
-                            {{if .New}}<span class="float-right badge badge-success">New!</span>{{end}}
-                            <span>{{.Name}}</span>
-                        </a>
-                    </li>
+                    {{template "sidebar_item" (dict "ActiveGuild" $ag "Item" .)}}
                     {{end}}
                     <li class="nav-parent">
                         <a class="nav-link" href="#">
@@ -213,13 +207,7 @@ $(function(){
                         </a>
                         <ul class="nav nav-children">
                             {{range (index .SidebarItems "Core")}}
-                             <li>
-                                <a class="nav-link" data-partial-load="true" href="/manage/{{$ag.ID}}/{{.URL}}">
-                                    {{if .Icon}}<i class="{{.Icon}}" aria-hidden="true"></i>{{end}}
-                                    {{if .New}}<span class="float-right badge badge-success">New!</span>{{end}}
-                                    <span>{{.Name}}</span>
-                                </a>
-                            </li>
+                            {{template "sidebar_item" (dict "ActiveGuild" $ag "Item" .)}}
                             {{end}}                            
                         </ul>
                     </li>
@@ -230,13 +218,7 @@ $(function(){
                         </a>
                         <ul class="nav nav-children">
                             {{range (index .SidebarItems "Feeds")}}
-                             <li>
-                                <a class="nav-link" data-partial-load="true" href="/manage/{{$ag.ID}}/{{.URL}}">
-                                    {{if .Icon}}<i class="{{.Icon}}" aria-hidden="true"></i>{{end}}
-                                    {{if .New}}<span class="float-right badge badge-success">New!</span>{{end}}
-                                    <span>{{.Name}}</span>
-                                </a>
-                            </li>
+                            {{template "sidebar_item" (dict "ActiveGuild" $ag "Item" .)}}
                             {{end}}
                         </ul>
                     </li>
@@ -247,13 +229,7 @@ $(function(){
                         </a>
                         <ul class="nav nav-children">
                             {{range (index .SidebarItems "Tools")}}
-                             <li>
-                                <a class="nav-link" data-partial-load="true" href="/manage/{{$ag.ID}}/{{.URL}}">
-                                    {{if .Icon}}<i class="{{.Icon}}" aria-hidden="true"></i>{{end}}
-                                    {{if .New}}<span class="float-right badge badge-success">New!</span>{{end}}
-                                    <span>{{.Name}}</span>
-                                </a>
-                            </li>
+                            {{template "sidebar_item" (dict "ActiveGuild" $ag "Item" .)}}
                             {{end}}
                         </ul>
                     </li>
@@ -264,13 +240,7 @@ $(function(){
                         </a>
                         <ul class="nav nav-children">
                             {{range (index .SidebarItems "Fun")}}
-                             <li>
-                                <a class="nav-link" data-partial-load="true" href="/manage/{{$ag.ID}}/{{.URL}}">
-                                    {{if .Icon}}<i class="{{.Icon}}" aria-hidden="true"></i>{{end}}
-                                    {{if .New}}<span class="float-right badge badge-success">New!</span>{{end}}
-                                    <span>{{.Name}}</span>
-                                </a>
-                            </li>
+                            {{template "sidebar_item" (dict "ActiveGuild" $ag "Item" .)}}
                             {{end}}
                         </ul>
                     </li>
@@ -305,6 +275,19 @@ $(function(){
     </a>
 </div>
 {{end}}
+{{end}}
+
+{{define "sidebar_item"}}
+{{$ag := .ActiveGuild}}
+{{$item := .Item}}
+<li>
+    <a class="nav-link" {{if not $item.External}}data-partial-load="true"{{else}}target="_blank"{{end}} href="{{if not $item.External}}/manage/{{$ag.ID}}/{{$item.URL}}{{else}}{{$item.URL}}{{end}}">
+        {{if $item.Icon}}<i class="{{$item.Icon}}" aria-hidden="true"></i>{{end}}
+        {{if $item.CustomIconImage}}<image src="{{$item.CustomIconImage}}" width="24" class="nav-sidebar-icon-custom mr-1" />{{end}}
+        {{if $item.New}}<span class="float-right badge badge-success">New!</span>{{end}}
+        <span>{{$item.Name}}</span>
+    </a>
+</li>
 {{end}}
 
 
