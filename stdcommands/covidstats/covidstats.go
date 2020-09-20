@@ -60,7 +60,7 @@ var Command = &commands.YAGCommand{
 	CmdCategory:  commands.CategoryFun,
 	Name:         "CoronaStatistics",
 	Aliases:      []string{"coronastats", "cstats", "cst"},
-	Description:  "Shows the weather using OpenWeatherMap API. \nLocation is set by city name and optional state code, country code \n eg. <prefix>owm Paris,AR,US",
+	Description:  "WIP: Shows COVID-19 statistics sourcing Worldometer statistics. Input is country name or their ISO2/3 shorthand.",
 	RunInDM:      true,
 	RequiredArgs: 1,
 	Arguments: []*dcmd.ArgDef{
