@@ -7,11 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	//"math"
 	"net/http"
 	"sort"
-	//"strings"
-	//"time"
 
 	"github.com/jonas747/dcmd"
 	"github.com/jonas747/discordgo"
