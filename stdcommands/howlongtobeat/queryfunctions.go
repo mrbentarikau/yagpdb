@@ -12,9 +12,7 @@ import (
 	"github.com/jonas747/yagpdb/commands"
 )
 
-func getGameData(name string) (string, error) {
-	searchTitle := name
-
+func getGameData(searchTitle string) (string, error) {
 	data := url.Values{}
 	data.Set("queryString", searchTitle)
 	data.Add("t", "games")            // search type - for games, second option would be HLTB users
