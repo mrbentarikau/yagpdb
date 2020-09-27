@@ -39,7 +39,7 @@ var Command = &commands.YAGCommand{
 	Name:         "HowLongToBeat",
 	Aliases:      []string{"hltb"},
 	RequiredArgs: 1,
-	Description:  "Game information based on howlongtobeat.com. Results are sorted by popularity - the site's default. Without -p returns the first result.",
+	Description:  "Game information based on query from howlongtobeat.com.\nResults are sorted by popularity - the site's default. Without -p returns the first result.",
 	Arguments: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Name: "Game title", Type: dcmd.String},
 	},
@@ -96,7 +96,7 @@ var Command = &commands.YAGCommand{
 					paginatedEmbed := embedCreator(hltbQuery, i, paginatedView)
 					return paginatedEmbed, nil
 				})
-			if err == nil {
+			if err != nil {
 				return "Something went wrong", nil
 			}
 		} else {
