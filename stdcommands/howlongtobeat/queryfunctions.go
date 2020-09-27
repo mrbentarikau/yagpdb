@@ -1,7 +1,6 @@
 package howlongtobeat
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -16,7 +15,7 @@ func getGameData(searchTitle string) (string, error) {
 	data := url.Values{}
 	data.Set("queryString", searchTitle)
 	data.Add("t", "games")            // search type - for games, second option would be HLTB users
-	data.Add("sorthead", "popular")   // sort by release date,popular or name... name gives more results
+	data.Add("sorthead", "popular")   // sort by release date,rating,popularity or name...  all parameters can be seen via header data, popular's the best
 	data.Add("sortd", "Normal Order") // sorting, Normal or Reverse
 	data.Add("plat", "")              // platform, empty string is for all
 	data.Add("length_type", "main")   // length range category, main is fine
@@ -71,7 +70,7 @@ func parseGameData(gameName string, toReader *strings.Reader) ([]hltb, error) {
 
 	parseData.Find("li").Each(func(_ int, sel *goquery.Selection) {
 		queryParsed.ImageURL = sel.Find("img").AttrOr(`src`, ``)
-		queryParsed.GameURL = fmt.Sprintf("%s%s", hltbURL, sel.Find("a").AttrOr(`href`, ``))
+		queryParsed.GameURL = hltbURL + sel.Find("a").AttrOr(`href`, ``)
 
 		queryParsed.GameTitle = strings.TrimSpace(sel.Find("h3").Text())
 		queryParsed.PureTitle = strings.TrimSpace(sel.Find("a").AttrOr(`title`, ``))
