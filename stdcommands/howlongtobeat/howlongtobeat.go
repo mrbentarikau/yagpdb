@@ -39,13 +39,13 @@ var Command = &commands.YAGCommand{
 	Name:         "HowLongToBeat",
 	Aliases:      []string{"hltb"},
 	RequiredArgs: 1,
-	Description:  "Game information based on howlongtobeat.com, results ordered by term's popularity on site. Without -paginate gives the most popular result in case of broader search term.",
+	Description:  "Game information based on howlongtobeat.com. Results are sorted by popularity - the site's default. Without -p returns the first result.",
 	Arguments: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Name: "Game title", Type: dcmd.String},
 	},
 	ArgSwitches: []*dcmd.ArgDef{
 		&dcmd.ArgDef{Switch: "c", Name: "Compact output"},
-		&dcmd.ArgDef{Switch: "p", Name: "Paginated output, sorted by Levenshtein distance (max 20 pages)"},
+		&dcmd.ArgDef{Switch: "p", Name: "Paginated output, sorted by Levenshtein distance (max 20 results)"},
 	},
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
 		var compactView, paginatedView bool
@@ -96,7 +96,7 @@ var Command = &commands.YAGCommand{
 					paginatedEmbed := embedCreator(hltbQuery, i, paginatedView)
 					return paginatedEmbed, nil
 				})
-			if err != nil {
+			if err == nil {
 				return "Something went wrong", nil
 			}
 		} else {
