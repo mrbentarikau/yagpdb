@@ -3,6 +3,7 @@ package web
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -14,7 +15,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"unsafe"
 
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/yagpdb/bot/botrest"
@@ -38,6 +38,16 @@ type serverHomeWidget struct {
 type serverHomeWidgetCategory struct {
 	Category *common.PluginCategory
 	Widgets  []*serverHomeWidget
+}
+
+type redditQuoteStruct struct {
+	Data struct {
+		Children []struct {
+			Data struct {
+				Selfttext string `json:"selftext"`
+			}
+		}
+	}
 }
 
 func HandleServerHome(w http.ResponseWriter, r *http.Request) (TemplateData, error) {
@@ -135,7 +145,8 @@ func HandleSelectServer(w http.ResponseWriter, r *http.Request) interface{} {
 
 	posts := discordblog.GetNewestPosts(10)
 	tmpl["Posts"] = posts
-	tmpl["RedditQuotes"] = *(*string)(atomic.LoadPointer(redditQuote))
+	//tmpl["RedditQuotes"] = *(*string)(atomic.LoadPointer(redditQuote))
+	tmpl["RedditQuotes"] = redditQuote
 
 	return tmpl
 }
@@ -425,18 +436,41 @@ func pollCCsRan() {
 	}
 }
 
-var redditQuote = new(unsafe.Pointer)
+var redditQuote string
 
 func pollRedditQuotes() {
-	t := time.NewTicker(time.Hour)
+	t := time.NewTicker(time.Hour * 24)
 	for {
-		quote, err := ioutil.ReadFile("dailyredditquote")
+
+		var redditQuoteQuery []redditQuoteStruct
+		var RedditHost = "https://api.reddit.com/"
+		var RedditJSON = "r/caubert/random.json"
+
+		queryURL := RedditHost + RedditJSON
+		fmt.Println(queryURL)
+		req, err := http.NewRequest("GET", queryURL, nil)
 		if err != nil {
-			logger.WithError(err).Error("failed reading dailyredditquote file")
-			return
-		} else {
-			atomic.StorePointer(redditQuote, unsafe.Pointer(&quote))
+			redditQuote = fmt.Sprint(err)
 		}
+
+		req.Header.Set("User-Agent", "PAGST/20.42.6702")
+
+		resp, _ := http.DefaultClient.Do(req)
+		if err != nil {
+			redditQuote = fmt.Sprint(err)
+		}
+
+		body, _ := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			redditQuote = fmt.Sprint(err)
+		}
+
+		queryErr := json.Unmarshal(body, &redditQuoteQuery)
+		if queryErr != nil {
+			redditQuote = fmt.Sprint(queryErr)
+		}
+
+		redditQuote = redditQuoteQuery[0].Data.Children[0].Data.Selfttext
 
 		<-t.C
 	}
@@ -447,16 +481,6 @@ func handleRobotsTXT(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`User-agent: *
 Disallow: /manage/
 `))
-}
-
-func handleKeyBaseTXT(w http.ResponseWriter, r *http.Request) {
-	f, err := ioutil.ReadFile("keybase.txt")
-	if err != nil {
-		logger.WithError(err).Error("failed reading keybase.txt file")
-		return
-	}
-
-	w.Write(f)
 }
 
 func handleAdsTXT(w http.ResponseWriter, r *http.Request) {
