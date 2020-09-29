@@ -3,7 +3,6 @@ package web
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -38,16 +37,6 @@ type serverHomeWidget struct {
 type serverHomeWidgetCategory struct {
 	Category *common.PluginCategory
 	Widgets  []*serverHomeWidget
-}
-
-type redditQuoteStruct struct {
-	Data struct {
-		Children []struct {
-			Data struct {
-				Selfttext string `json:"selftext"`
-			}
-		}
-	}
 }
 
 func HandleServerHome(w http.ResponseWriter, r *http.Request) (TemplateData, error) {
@@ -316,7 +305,7 @@ func genFakeNodeStatuses(hosts int, nodes int, shards int) []*HostStatus {
 
 	for hostI := 0; hostI < hosts; hostI++ {
 		host := &HostStatus{
-			Name: "yagpdb-" + strconv.Itoa(hostI),
+			Name: "pagstdb-" + strconv.Itoa(hostI),
 		}
 		for nodeI := 0; nodeI < nodes; nodeI++ {
 
@@ -439,38 +428,10 @@ func pollCCsRan() {
 var redditQuote string
 
 func pollRedditQuotes() {
-	t := time.NewTicker(time.Hour * 24)
+	t := time.NewTicker(time.Hour)
 	for {
 
-		var redditQuoteQuery []redditQuoteStruct
-		var RedditHost = "https://api.reddit.com/"
-		var RedditJSON = "r/caubert/random.json"
-
-		queryURL := RedditHost + RedditJSON
-		fmt.Println(queryURL)
-		req, err := http.NewRequest("GET", queryURL, nil)
-		if err != nil {
-			redditQuote = fmt.Sprint(err)
-		}
-
-		req.Header.Set("User-Agent", "PAGST/20.42.6702")
-
-		resp, _ := http.DefaultClient.Do(req)
-		if err != nil {
-			redditQuote = fmt.Sprint(err)
-		}
-
-		body, _ := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			redditQuote = fmt.Sprint(err)
-		}
-
-		queryErr := json.Unmarshal(body, &redditQuoteQuery)
-		if queryErr != nil {
-			redditQuote = fmt.Sprint(queryErr)
-		}
-
-		redditQuote = redditQuoteQuery[0].Data.Children[0].Data.Selfttext
+		redditQuote = getRedditQuote()
 
 		<-t.C
 	}
