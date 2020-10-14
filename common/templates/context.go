@@ -642,7 +642,7 @@ func (s Slice) Del(index int) (string, error) {
 	if index >= len(s) {
 		return "", errors.New("Index out of bounds")
 	}
-	//s = append(s[:index], s[index+1:]...)
+
 	copy(s[index:], s[index+1:])
 	s[len(s)-1] = ""
 	s = s[:len(s)-1]
