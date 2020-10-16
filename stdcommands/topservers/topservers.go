@@ -45,7 +45,7 @@ var Command = &commands.YAGCommand{
 
 		out := "```"
 		for k, v := range results {
-			out += fmt.Sprintf("\n%2s%d: %-25s (%d members)", "#", k+skip+1, v.Name, v.MemberCount)
+			out += fmt.Sprintf("\n#%-2d: %-25s (%d members)", k+skip+1, v.Name, v.MemberCount)
 		}
 		return "Top servers the bot is on:\n" + out + "\n```", nil
 	},
