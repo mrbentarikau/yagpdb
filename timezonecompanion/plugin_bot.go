@@ -119,8 +119,8 @@ func (p *Plugin) AddCommands() {
 			if err != nil {
 				return "Unknown timezone", nil
 			}
-			name, _ := time.Now().In(loc).Zone()
 
+			name, _ := time.Now().In(loc).Zone()
 			m := &models.UserTimezone{
 				UserID:       parsed.Msg.Author.ID,
 				TimezoneName: zone,
