@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -257,8 +258,11 @@ func RefreshStatus(session *discordgo.Session) {
 	if streamingURL != "" {
 		session.UpdateStreamingStatus(0, status, streamingURL)
 	} else {
-		session.UpdateStatus(0, status)
-		//session.UpdateListeningStatus(status)
+		if math.Mod(float64(time.Now().Hour()), 2) == 0 {
+			session.UpdateStatus(0, status)
+		} else {
+			session.UpdateListeningStatus(status)
+		}
 	}
 
 }
