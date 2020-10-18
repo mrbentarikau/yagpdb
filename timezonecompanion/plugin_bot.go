@@ -98,20 +98,17 @@ func (p *Plugin) AddCommands() {
 				}
 
 				out = "More than 1 result, reuse the command for fine tuning with a one of the following:\n"
-				levZone := 1000
+				levDistance := 1000
 				for _, v := range zones {
 					if s := StrZone(v); s != "" {
 						re := regexp.MustCompile(`.*` + userInput + `.*:`)
-						reStr := re.FindString(s)
-
-						if levenshtein([]rune(userInput), []rune(reStr)) <= levZone {
-							levZone = levenshtein([]rune(userInput), []rune(reStr))
+						if levD := levenshtein([]rune(userInput), []rune(re.FindString(s))); levD <= levDistance {
+							levDistance = levD
 							manyZones = v
 						}
 						out += s + "\n"
 					}
 				}
-				//return out, nil
 			}
 
 			if manyZones == "" {
