@@ -111,9 +111,8 @@ func (p *Plugin) AddCommands() {
 				}
 			}
 
-			if manyZones == "" {
-				zone = zones[0]
-			} else {
+			zone = zones[0]
+			if manyZones != "" {
 				zone = manyZones
 			}
 			loc, err := time.LoadLocation(zone)
