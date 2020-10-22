@@ -59,6 +59,7 @@ require (
 	github.com/prometheus/client_golang v1.5.1
 	github.com/russross/blackfriday v1.5.2
 	github.com/shirou/gopsutil v2.18.12+incompatible
+	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/shurcooL/github_flavored_markdown v0.0.0-20181002035957-2122de532470
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
