@@ -31,7 +31,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/memstats"
 	"github.com/jonas747/yagpdb/stdcommands/mentionrole"
 	"github.com/jonas747/yagpdb/stdcommands/openweathermap"
-	"github.com/jonas747/yagpdb/stdcommands/pagststatus"
+	"github.com/jonas747/yagpdb/stdcommands/pagstatus"
 	"github.com/jonas747/yagpdb/stdcommands/ping"
 	"github.com/jonas747/yagpdb/stdcommands/poll"
 	"github.com/jonas747/yagpdb/stdcommands/roll"
@@ -114,7 +114,7 @@ func (p *Plugin) AddCommands() {
 		topevents.Command,
 		currentshard.Command,
 		memberfetcher.Command,
-		pagststatus.Command,
+		pagstatus.Command,
 		setstatus.Command,
 		createinvite.Command,
 		findserver.Command,
