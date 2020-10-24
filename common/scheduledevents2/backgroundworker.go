@@ -127,7 +127,7 @@ func cleanupRecent() error {
 	// copy(args[1:], recent)
 	args[0] = "recently_done_scheduled_events"
 	if len(args) > 1 {
-		fmt.Println("SAFE HERE!!!")
+
 		return common.RedisPool.Do(radix.Cmd(nil, "SREM", args...))
 	}
 	return nil
