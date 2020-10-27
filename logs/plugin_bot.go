@@ -135,6 +135,10 @@ var cmdWhois = &commands.YAGCommand{
 		switch member.PresenceStatus {
 		case 1:
 			onlineStatus = "Online"
+			botUser := *common.BotUser
+			if member.ID == botUser.ID {
+				onlineStatus = "Idle"
+			}
 		case 2:
 			onlineStatus = "Idle"
 		case 3:
