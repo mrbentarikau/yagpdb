@@ -2,6 +2,7 @@ package twitter
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -222,11 +223,11 @@ func createTweetEmbed(tweet *twitter.Tweet) *discordgo.MessageEmbed {
 	text = ""
 
 	if tweet.RetweetedStatus != nil {
-		text += "Retweet: "
+		text += fmt.Sprintf("[Retweet:](https://twitter.com/%s/status/%s) ", tweet.RetweetedStatus.User.ScreenName, tweet.RetweetedStatus.IDStr)
 	} else if tweet.InReplyToScreenName != "" || tweet.InReplyToStatusID != 0 || tweet.InReplyToUserID != 0 {
-		text += "Reply: "
+		text += fmt.Sprintf("[Reply:](https://twitter.com/%s/status/%s) ", tweet.InReplyToScreenName, tweet.InReplyToStatusIDStr)
 	} else if tweet.QuotedStatus != nil {
-		text += "Quote: "
+		text += fmt.Sprintf("[Quote:](https://twitter.com/%s/status/%s) ", tweet.QuotedStatus.User.ScreenName, tweet.QuotedStatusIDStr)
 	}
 
 	if tweet.FullText != "" {
