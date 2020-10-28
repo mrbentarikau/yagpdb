@@ -218,12 +218,23 @@ func createTweetEmbed(tweet *twitter.Tweet) *discordgo.MessageEmbed {
 		timeStr = parsed.Format(time.RFC3339)
 	}
 
-	text := tweet.Text
-	if tweet.FullText != "" {
-		text = tweet.FullText
+	var text string
+	text = ""
+
+	if tweet.RetweetedStatus != nil {
+		text += "Retweet: "
+	} else if tweet.InReplyToScreenName != "" || tweet.InReplyToStatusID != 0 || tweet.InReplyToUserID != 0 {
+		text += "Reply: "
+	} else if tweet.QuotedStatus != nil {
+		text += "Quote: "
 	}
-	if tweet.ExtendedTweet != nil && tweet.ExtendedTweet.FullText != "" {
-		text = tweet.ExtendedTweet.FullText
+
+	if tweet.FullText != "" {
+		text += tweet.FullText
+	} else if tweet.ExtendedTweet != nil && tweet.ExtendedTweet.FullText != "" {
+		text += tweet.ExtendedTweet.FullText
+	} else {
+		text += tweet.Text
 	}
 
 	embed := &discordgo.MessageEmbed{
