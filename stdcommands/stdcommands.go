@@ -22,6 +22,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/editrole"
 	"github.com/jonas747/yagpdb/stdcommands/findserver"
 	"github.com/jonas747/yagpdb/stdcommands/globalrl"
+	"github.com/jonas747/yagpdb/stdcommands/guildunavailable"
 	"github.com/jonas747/yagpdb/stdcommands/howlongtobeat"
 	"github.com/jonas747/yagpdb/stdcommands/info"
 	"github.com/jonas747/yagpdb/stdcommands/invite"
@@ -115,6 +116,7 @@ func (p *Plugin) AddCommands() {
 		currentshard.Command,
 		memberfetcher.Command,
 		pagstatus.Command,
+		guildunavailable.Command,
 		setstatus.Command,
 		createinvite.Command,
 		findserver.Command,
