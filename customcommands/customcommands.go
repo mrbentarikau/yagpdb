@@ -177,8 +177,8 @@ func (cc *CustomCommand) Validate(tmpl web.TemplateData) (ok bool) {
 		return false
 	}
 
-	if cc.TriggerTypeForm == "interval_minutes" && cc.TimeTriggerInterval < 5 {
-		tmpl.AddAlerts(web.ErrorAlert("Minimum interval is now 5 minutes (was recently from 1)"))
+	if cc.TriggerTypeForm == "interval_minutes" && cc.TimeTriggerInterval < 1 {
+		tmpl.AddAlerts(web.ErrorAlert("Minimum interval is 1 minute..."))
 		return false
 	}
 
