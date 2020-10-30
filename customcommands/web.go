@@ -272,8 +272,8 @@ func handleUpdateCommand(w http.ResponseWriter, r *http.Request) (web.TemplateDa
 
 	// check low interval limits
 	if dbModel.TriggerType == int(CommandTriggerInterval) && dbModel.TimeTriggerInterval <= 10 {
-		if dbModel.TimeTriggerInterval < 5 {
-			dbModel.TimeTriggerInterval = 5
+		if dbModel.TimeTriggerInterval < 1 {
+			dbModel.TimeTriggerInterval = 1
 		}
 
 		ok, err := checkIntervalLimits(ctx, activeGuild.ID, dbModel.LocalID, templateData)
