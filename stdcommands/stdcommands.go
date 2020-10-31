@@ -21,6 +21,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/dogfact"
 	"github.com/jonas747/yagpdb/stdcommands/editrole"
 	"github.com/jonas747/yagpdb/stdcommands/findserver"
+	"github.com/jonas747/yagpdb/stdcommands/getiplocation"
 	"github.com/jonas747/yagpdb/stdcommands/globalrl"
 	"github.com/jonas747/yagpdb/stdcommands/guildunavailable"
 	"github.com/jonas747/yagpdb/stdcommands/howlongtobeat"
@@ -103,6 +104,7 @@ func (p *Plugin) AddCommands() {
 		xkcd.Command,
 		howlongtobeat.Command,
 		covidstats.Command,
+		getiplocation.Command,
 
 		// Maintenance
 		stateinfo.Command,
