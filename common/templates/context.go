@@ -643,7 +643,7 @@ func (s Slice) Append(item interface{}) (interface{}, error) {
 }
 
 func (s Slice) Del(index int) (string, error) {
-	if index >= len(s) {
+	if index >= len(s) || index < 0 {
 		return "", errors.New("Index out of bounds")
 	}
 
