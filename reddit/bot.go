@@ -70,7 +70,7 @@ func (p *Plugin) AddCommands() {
 	})
 }
 
-/*
+
 func (p *Plugin) Status() (string, string) {
 	numFeeds, err := models.RedditFeeds(models.RedditFeedWhere.Disabled.EQ(false)).CountG(context.Background())
 	if err != nil {
@@ -80,7 +80,7 @@ func (p *Plugin) Status() (string, string) {
 
 	return "Reddit feeds", fmt.Sprintf("%d", numFeeds)
 }
-*/
+
 // func (p *Plugin) Status() (string, string) {
 // 	subs := 0
 // 	channels := 0
