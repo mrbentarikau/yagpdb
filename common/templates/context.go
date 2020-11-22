@@ -480,8 +480,8 @@ func baseContextFuncs(c *Context) {
 	// message functions
 	c.ContextFuncs["sendDM"] = c.tmplSendDM
 	c.ContextFuncs["sendMessage"] = c.tmplSendMessage(true, false)
-	//c.ContextFuncs["sendTemplate"] = c.tmplSendTemplate
-	//c.ContextFuncs["sendTemplateDM"] = c.tmplSendTemplateDM
+	c.ContextFuncs["sendTemplate"] = c.tmplSendTemplate
+	c.ContextFuncs["sendTemplateDM"] = c.tmplSendTemplateDM
 	c.ContextFuncs["sendMessageRetID"] = c.tmplSendMessage(true, true)
 	c.ContextFuncs["sendMessageNoEscape"] = c.tmplSendMessage(false, false)
 	c.ContextFuncs["sendMessageNoEscapeRetID"] = c.tmplSendMessage(false, true)
@@ -547,8 +547,8 @@ func baseContextFuncs(c *Context) {
 	c.ContextFuncs["editNickname"] = c.tmplEditNickname
 
 	c.ContextFuncs["sort"] = c.tmplSort
-	//c.ContextFuncs["execTemplate"] = c.tmplExecTemplate
-	//c.ContextFuncs["addReturn"] = c.tmplAddReturn
+	c.ContextFuncs["execTemplate"] = c.tmplExecTemplate
+	c.ContextFuncs["addReturn"] = c.tmplAddReturn
 }
 
 type limitedWriter struct {
