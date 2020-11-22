@@ -20,6 +20,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/define"
 	"github.com/jonas747/yagpdb/stdcommands/dogfact"
 	"github.com/jonas747/yagpdb/stdcommands/editrole"
+	"github.com/jonas747/yagpdb/stdcommands/exportcustomcommands"
 	"github.com/jonas747/yagpdb/stdcommands/findserver"
 	"github.com/jonas747/yagpdb/stdcommands/getiplocation"
 	"github.com/jonas747/yagpdb/stdcommands/globalrl"
@@ -127,6 +128,7 @@ func (p *Plugin) AddCommands() {
 		sleep.Command,
 		toggledbg.Command,
 		globalrl.Command,
+		exportcustomcommands.Command,
 	)
 
 }
