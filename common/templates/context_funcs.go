@@ -235,6 +235,7 @@ func (c *Context) sendNestedTemplate(channel interface{}, dm, exec bool, name st
 
 	c.CurrentFrame.execMode = exec
 	// pass some data
+
 	if len(data) > 1 {
 		c.Data["TemplateArgs"], _ = Dictionary(data...)
 	} else if len(data) == 1 {
@@ -243,6 +244,7 @@ func (c *Context) sendNestedTemplate(channel interface{}, dm, exec bool, name st
 
 	// and finally execute the child template
 	c.CurrentFrame.parsedTemplate = t
+	// KRAAKA error happens here
 	resp, err := c.executeParsed()
 	if err != nil {
 		return "", err
