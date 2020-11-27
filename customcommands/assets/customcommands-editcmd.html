@@ -510,7 +510,6 @@
         viewportMargin: Infinity,
     });
     editor.setSize("97%", null);
-    var x = editor.getValue().length;
     editor.on("focus",function() {onCCChanged(document.querySelector('.CodeMirror'),editor)});
     editor.on("change",function() {editor.save(),onCCChanged(document.querySelector('.CodeMirror'),editor)});
     editor.on("blur",function() {editor.save(),editor.toTextArea()});
