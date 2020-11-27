@@ -252,11 +252,15 @@
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <div style="margin-bottom: 5px">Editor theme:
-                                        <select onchange="selectTheme()" id=themeSelect style="background-color: #282828;color:#a1a1a1;border-color:#c1c1c1; margin-left:5px">
-                                            <option selected>monokai</option>
+                                        <select onchange="selectTheme()" id=themeSelect style="background-color: #282828;color:#a1a1a1;border-color:#a1a1a1; margin-left:5px">
+                                            <option selected>darcula</option>
+                                            <option>ayu-dark</option>
                                             <option>bespin</option>
-                                            <option>dracula</option>
+                                            <option>gruvbox-dark</option>
                                             <option>mbo</option>
+                                            <option>monokai</option>
+                                            <option>panda-syntax</option>
+                                            <option>vibrant-ink</option>
                                             <option>yonce</option>
                                         </select>
                                     </div>
@@ -435,10 +439,15 @@
 <script src="/static/codemirror/mode/go/go.js"></script>
 
 <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
+
+<link rel="stylesheet" href="/static/codemirror/theme/ayu-dark.css">
 <link rel="stylesheet" href="/static/codemirror/theme/bespin.css">
-<link rel="stylesheet" href="/static/codemirror/theme/dracula.css">
+<link rel="stylesheet" href="/static/codemirror/theme/darcula.css">
+<link rel="stylesheet" href="/static/codemirror/theme/gruvbox-dark.css">
 <link rel="stylesheet" href="/static/codemirror/theme/mbo.css">
 <link rel="stylesheet" href="/static/codemirror/theme/monokai.css">
+<link rel="stylesheet" href="/static/codemirror/theme/panda-syntax.css">
+<link rel="stylesheet" href="/static/codemirror/theme/vibrant-ink.css">
 <link rel="stylesheet" href="/static/codemirror/theme/yonce.css">
 
 <script type="text/javascript">
@@ -512,12 +521,13 @@
         triggerTypeChanged();
     })
     
-    var textAreaTheme = "monokai"
+    var textAreaTheme = "darcula"
     var input = document.getElementById("themeSelect");
-    console.log(input.value)
+
     function selectTheme() {
         textAreaTheme = input.options[input.selectedIndex].textContent;
     }
+   
     function textAreaWrapper(textAreaWrapperValue){    
     var editor = CodeMirror.fromTextArea(textAreaWrapperValue,{
         mode: "go", 
