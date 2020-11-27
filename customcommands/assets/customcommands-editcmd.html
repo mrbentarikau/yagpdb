@@ -251,10 +251,21 @@
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <div class="form-group">
+                                    <div style="margin-bottom: 5px">Editor theme:
+                                        <select onchange="selectTheme()" id=themeSelect style="background-color: #282828;color:#a1a1a1;border-color:#c1c1c1; margin-left:5px">
+                                            <option selected>monokai</option>
+                                            <option>bespin</option>
+                                            <option>dracula</option>
+                                            <option>mbo</option>
+                                            <option>yonce</option>
+                                        </select>
+                                    </div>
                                     <label for="responses">Response (<span
-                                            class="cc-length-counter">x</span>/20000)</label>
+                                            class="cc-length-counter">x</span>/20000)
+                                    </label>
+
                                     <!-- Use .btn-add for simplicity and let the page loader adjust. -->
-                              
+                                    
                                     {{range .CC.Responses}}
                                     <div class="entry input-group input-group-sm">
                                             <textarea class="pagst-textarea form-control response-text-area tab-textbox" name="responses"
@@ -425,6 +436,7 @@
 
 <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
 <link rel="stylesheet" href="/static/codemirror/theme/bespin.css">
+<link rel="stylesheet" href="/static/codemirror/theme/dracula.css">
 <link rel="stylesheet" href="/static/codemirror/theme/mbo.css">
 <link rel="stylesheet" href="/static/codemirror/theme/monokai.css">
 <link rel="stylesheet" href="/static/codemirror/theme/yonce.css">
@@ -500,11 +512,17 @@
         triggerTypeChanged();
     })
     
+    var textAreaTheme = "monokai"
+    var input = document.getElementById("themeSelect");
+    console.log(input.value)
+    function selectTheme() {
+        textAreaTheme = input.options[input.selectedIndex].textContent;
+    }
     function textAreaWrapper(textAreaWrapperValue){    
-    editor = CodeMirror.fromTextArea(textAreaWrapperValue,{
+    var editor = CodeMirror.fromTextArea(textAreaWrapperValue,{
         mode: "go", 
         //tabSize: 4,
-        theme: "bespin",
+        theme: textAreaTheme,
         lineNumbers:true,
         lineWrapping:true,
         viewportMargin: Infinity,
