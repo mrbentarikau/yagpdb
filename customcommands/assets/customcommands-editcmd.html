@@ -253,9 +253,10 @@
                                 <div class="form-group">
                                     <div style="margin: 0 3px 7px 0px">Editor theme:
                                         <select onchange="selectTheme()" id=themeSelect style="background-color: #282828;color:#a1a1a1;border-color:#a1a1a1;">
-                                            <option selected>darcula</option>
+                                            <option selected>no CodeMirror</option>
                                             <option>ayu-dark</option>
                                             <option>bespin</option>
+                                            <option>darcula</option>
                                             <option>gruvbox-dark</option>
                                             <option>mbo</option>
                                             <option>monokai</option>
@@ -523,7 +524,7 @@
         triggerTypeChanged();
     })
     
-    var textAreaTheme = "darcula"
+    var textAreaTheme = "no CodeMirror"
     var bracketsEnabled = false
     var input = document.getElementById("themeSelect");
     var bracketsInput = document.getElementById("bracketsSelect");
@@ -541,6 +542,9 @@
     }
     
     function textAreaWrapper(textAreaWrapperValue){    
+    if (textAreaTheme == "no CodeMirror") {
+        return
+    }
     editor = CodeMirror.fromTextArea(textAreaWrapperValue,{
         mode: "go", 
         //tabSize: 4,
