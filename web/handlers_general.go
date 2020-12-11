@@ -435,7 +435,7 @@ func pollAMV2sRan() {
 
 		within := time.Now().Add(-24 * time.Hour)
 		var result null.Int64
-		const q = "SELECT SUM(count) FROM analytics WHERE plugin='automod_v2'"
+		const q = "SELECT SUM(count) FROM analytics WHERE created_at > $1 AND plugin='automod_v2'"
 		err := common.PQ.QueryRow(q, within).Scan(&result)
 		if err != nil {
 			logger.WithError(err).Error("failed counting AMV2s ran today")
