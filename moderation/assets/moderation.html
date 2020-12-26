@@ -37,11 +37,13 @@ the punishment{{end}}
                     <li class="nav-item"><a class="nav-link" href="#warn" aria-controls="warnings" role="tab"
                             data-toggle="tab">
                             Warnings <span
-                                class="indicator indicator-{{if .ModConfig.WarnCommandsEnabled}}success{{else}}danger{{end}}"></span>
+                            class="indicator indicator-{{if .ModConfig.WarnCommandsEnabled}}success{{else}}danger{{end}}"></span>
                         </a></li>
-                        <li class="nav-item"><a class="nav-link" href="#lockdown" aria-controls="lockdown" role="tab" data-toggle="tab">
-                        Lockdown <span class="indicator indicator-{{if .ModConfig.LockdownCmdEnabled}}success{{else}}danger{{end}}"></span>
-                        </a></li>
+                    <li class="nav-item"><a class="nav-link" href="#lockdown" aria-controls="lockdown" role="tab"
+                        data-toggle="tab">
+                        Lockdown <span
+                            class="indicator indicator-{{if .ModConfig.LockdownCmdEnabled}}success{{else}}danger{{end}}"></span>
+                    </a></li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="general">{{template "moderation_general" .}}</div>
