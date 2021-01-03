@@ -135,6 +135,7 @@ var cmdWhois = &commands.YAGCommand{
 		switch member.PresenceStatus {
 		case 1:
 			onlineStatus = "Online"
+			// "hack" to show bot idle, also discordo newupdateStatusData in gateway.go must be set to "idle"
 			botUser := *common.BotUser
 			if member.ID == botUser.ID {
 				onlineStatus = "Idle"
