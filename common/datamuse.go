@@ -1,3 +1,8 @@
+/*
+Using datamuse.com API and its /words endpoint.
+This service functions without restriction and without an API key for up to 100,000 requests per day.
+*/
+
 package common
 
 import (
@@ -7,15 +12,20 @@ import (
 	"net/http"
 )
 
-func adjectiveAntonymsFromAPI(adj string) string {
+func wordSynonymsFromAPI(wrd string, synSwitch bool) string {
 	type wordFromAPI struct {
 		Word string `json:"word"`
 	}
 
-	var antonyms []wordFromAPI
-	var response = adj
+	var words []wordFromAPI
+	var response = wrd
+	var code = "ant="
 
-	queryURL := "https://api.datamuse.com/words?rel_ant=" + adj
+	if synSwitch {
+		code = "syn="
+	}
+
+	queryURL := "https://api.datamuse.com/words?rel_" + code + wrd
 	req, err := http.NewRequest("GET", queryURL, nil)
 	if err != nil {
 		return response
@@ -37,13 +47,13 @@ func adjectiveAntonymsFromAPI(adj string) string {
 		return response
 	}
 
-	queryErr := json.Unmarshal([]byte(body), &antonyms)
+	queryErr := json.Unmarshal([]byte(body), &words)
 	if queryErr != nil {
 		return response
 	}
 
-	if len(antonyms) > 0 {
-		response = antonyms[rand.Intn(len(antonyms))].Word
+	if len(words) > 0 {
+		response = words[rand.Intn(len(words))].Word
 	}
 
 	return response
