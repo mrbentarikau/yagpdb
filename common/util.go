@@ -76,8 +76,8 @@ func SendTempMessage(session *discordgo.Session, duration time.Duration, cID int
 
 func RandomAdjective() string {
 	adjective := Adjectives[rand.Intn(len(Adjectives))]
-	request := rand.Intn(2)
-	if request > 0 {
+
+	if rand.Intn(2) > 0 {
 		adjective = adjectiveAntonymsFromAPI(adjective)
 	}
 
