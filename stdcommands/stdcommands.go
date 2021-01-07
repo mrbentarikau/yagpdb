@@ -53,6 +53,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/undelete"
 	"github.com/jonas747/yagpdb/stdcommands/viewperms"
 	"github.com/jonas747/yagpdb/stdcommands/weather"
+	"github.com/jonas747/yagpdb/stdcommands/wolframalpha"
 	"github.com/jonas747/yagpdb/stdcommands/wouldyourather"
 	"github.com/jonas747/yagpdb/stdcommands/xkcd"
 )
@@ -106,6 +107,7 @@ func (p *Plugin) AddCommands() {
 		howlongtobeat.Command,
 		covidstats.Command,
 		getiplocation.Command,
+		wolframalpha.Command,
 
 		// Maintenance
 		stateinfo.Command,
