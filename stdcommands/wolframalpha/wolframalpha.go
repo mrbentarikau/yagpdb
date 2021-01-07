@@ -106,6 +106,10 @@ func requestWolframAPI(input, wolframID string) (string, error) {
 		return result, nil
 	}
 
+	if len(waQuery.Queryresult.Pod) == 0 {
+		return "Wolfram has no good answer for this query", nil
+	}
+
 	result = waQuery.Queryresult.Pod[1].Subpod.Plaintext
 
 	return result, nil
