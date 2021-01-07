@@ -91,7 +91,7 @@ func requestWolframAPI(input, wolframID string) (string, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return "", commands.NewPublicError("WolframAlpha give a Not 200!")
+		return "", commands.NewPublicError(fmt.Sprintf("WolframAlpha did not 200! But: %d", resp.StatusCode))
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
