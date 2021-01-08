@@ -8,6 +8,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/advice"
 	"github.com/jonas747/yagpdb/stdcommands/allocstat"
 	"github.com/jonas747/yagpdb/stdcommands/banserver"
+	"github.com/jonas747/yagpdb/stdcommands/bashquotes"
 	"github.com/jonas747/yagpdb/stdcommands/calc"
 	"github.com/jonas747/yagpdb/stdcommands/catfact"
 	"github.com/jonas747/yagpdb/stdcommands/ccreqs"
@@ -108,6 +109,7 @@ func (p *Plugin) AddCommands() {
 		covidstats.Command,
 		getiplocation.Command,
 		wolframalpha.Command,
+		bashquotes.Command,
 
 		// Maintenance
 		stateinfo.Command,
