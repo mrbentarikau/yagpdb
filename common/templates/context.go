@@ -620,9 +620,14 @@ func (d Dict) Del(key interface{}) string {
 
 type SDict map[string]interface{}
 
-func (d SDict) Set(key string, value interface{}) string {
+func (d SDict) Set(key string, value interface{}) (string, error) {
+	if reflect.DeepEqual(d, value) {
+		return "", errors.New("Recursion detected")
+	}
+
 	d[key] = value
-	return ""
+
+	return "", nil
 }
 
 func (d SDict) Get(key string) interface{} {
@@ -666,6 +671,10 @@ func (s Slice) Del(index int) (string, error) {
 func (s Slice) Set(index int, item interface{}) (string, error) {
 	if index >= len(s) {
 		return "", errors.New("Index out of bounds")
+	}
+
+	if reflect.DeepEqual(s, item) {
+		return "", errors.New("Recursion detected")
 	}
 
 	s[index] = item
