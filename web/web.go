@@ -366,7 +366,6 @@ func NotFound() func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handler := middleware.Handler(r.Context())
-			//https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Deathvalleysky_nps_big.jpg/1920px-Deathvalleysky_nps_big.jpg
 			if handler == nil {
 				fmt.Fprint(w, `<html>
 	<head>
