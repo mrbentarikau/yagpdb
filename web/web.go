@@ -3,6 +3,7 @@ package web
 import (
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/jonas747/yagpdb/web/discordblog"
 	"github.com/natefinch/lumberjack"
 	"goji.io"
+	"goji.io/middleware"
 	"goji.io/pat"
 	"golang.org/x/crypto/acme/autocert"
 )
@@ -268,6 +270,7 @@ func setupRoutes() *goji.Mux {
 	serverPublicMux.Use(RequireActiveServer)
 	serverPublicMux.Use(LoadCoreConfigMiddleware)
 	serverPublicMux.Use(SetGuildMemberMiddleware)
+	serverPublicMux.Use(NotFound())
 
 	RootMux.Handle(pat.New("/public/:server"), serverPublicMux)
 	RootMux.Handle(pat.New("/public/:server/*"), serverPublicMux)
@@ -279,6 +282,7 @@ func setupRoutes() *goji.Mux {
 	ServerPubliAPIMux.Use(RequireActiveServer)
 	ServerPubliAPIMux.Use(LoadCoreConfigMiddleware)
 	ServerPubliAPIMux.Use(SetGuildMemberMiddleware)
+	ServerPublicMux.Use(NotFound())
 
 	RootMux.Handle(pat.Get("/api/:server"), ServerPubliAPIMux)
 	RootMux.Handle(pat.Get("/api/:server/*"), ServerPubliAPIMux)
@@ -304,6 +308,7 @@ func setupRoutes() *goji.Mux {
 	CPMux.Use(LoadCoreConfigMiddleware)
 	CPMux.Use(SetGuildMemberMiddleware)
 	CPMux.Use(RequireServerAdminMiddleware)
+	CPMux.Use(NotFound())
 
 	RootMux.Handle(pat.New("/manage/:server"), CPMux)
 	RootMux.Handle(pat.New("/manage/:server/*"), CPMux)
@@ -357,6 +362,27 @@ func setupRoutes() *goji.Mux {
 	return RootMux
 }
 
+func NotFound() func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handler := middleware.Handler(r.Context())
+			if handler == nil {
+				fmt.Fprint(w, `<html>
+	<head>
+	</head>
+	<body style="background: #1a1a1a url('https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Deathvalleysky_nps_big.jpg/1920px-Deathvalleysky_nps_big.jpg') center fixed no-repeat; color:#a1a1a1">
+	<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page, watch some sailing stones...</p>
+	</body>
+	</html>
+					`)
+				//http.Error(w, "Custom 404 Not Found Page", http.StatusNotFound)
+				return
+			}
+			h.ServeHTTP(w, r)
+		})
+	}
+}
+
 var StaticFileserverDir = "."
 
 func setupRootMux() {
@@ -376,6 +402,8 @@ func setupRootMux() {
 	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
 	mux.Handle(pat.Get("/robots.txt"), http.HandlerFunc(handleRobotsTXT))
 	mux.Handle(pat.Get("/ads.txt"), http.HandlerFunc(handleAdsTXT))
+
+	mux.Use(NotFound())
 
 	// General middleware
 	mux.Use(SkipStaticMW(gziphandler.GzipHandler, ".css", ".js", ".map"))
