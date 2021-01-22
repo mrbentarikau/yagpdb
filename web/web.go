@@ -3,7 +3,6 @@ package web
 import (
 	"crypto/tls"
 	"flag"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -37,6 +36,7 @@ var (
 	CPMux             *goji.Mux
 	ServerPublicMux   *goji.Mux
 	ServerPubliAPIMux *goji.Mux
+	Error404Mux       *goji.Mux
 
 	properAddresses bool
 
@@ -113,6 +113,7 @@ func loadTemplates() {
 		"templates/index.html", "templates/cp_main.html",
 		"templates/cp_nav.html", "templates/cp_selectserver.html", "templates/cp_logs.html",
 		"templates/status.html", "templates/cp_server_home.html", "templates/cp_core_settings.html",
+		"templates/error404.html",
 	}
 
 	for _, v := range coreTemplates {
@@ -295,6 +296,8 @@ func setupRoutes() *goji.Mux {
 	RootMux.Handle(pat.Get("/status"), ControllerHandler(HandleStatusHTML, "cp_status"))
 	RootMux.Handle(pat.Get("/status/"), ControllerHandler(HandleStatusHTML, "cp_status"))
 	RootMux.Handle(pat.Get("/status.json"), APIHandler(HandleStatusJSON))
+	RootMux.Handle(pat.Get("/error404"), RenderHandler(HandleError404, "error404"))
+	RootMux.Handle(pat.Get("/error404/"), RenderHandler(HandleError404, "error404"))
 	RootMux.Handle(pat.Post("/shard/:shard/reconnect"), ControllerHandler(HandleReconnectShard, "cp_status"))
 	RootMux.Handle(pat.Post("/shard/:shard/reconnect/"), ControllerHandler(HandleReconnectShard, "cp_status"))
 
@@ -326,6 +329,11 @@ func setupRoutes() *goji.Mux {
 
 	RootMux.Handle(pat.Get("/guild_selection"), RequireSessionMiddleware(ControllerHandler(HandleGetManagedGuilds, "cp_guild_selection")))
 	CPMux.Handle(pat.Get("/guild_selection"), RequireSessionMiddleware(ControllerHandler(HandleGetManagedGuilds, "cp_guild_selection")))
+
+	/*Error404Mux = goji.SubMux()
+	RootMux.Handle(pat.New("/error404"), Error404Mux)
+	error404Handler := RenderHandler(nil, "error404")
+	Error404Mux.Handle(pat.Get("/error404"), error404Handler)*/
 
 	// Set up the routes for the per server home widgets
 	for _, p := range common.Plugins {
@@ -367,17 +375,19 @@ func NotFound() func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handler := middleware.Handler(r.Context())
 			if handler == nil {
-				fmt.Fprint(w, `<html>
-	<head>
-	<link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png?v=6">
-	<link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png?v=6">
-	<link rel="shortcut icon" href="/static/icons/favicon.ico?v=6">
-	</head>
-	<body style="background: #1a1a1a url('static/img/deathvalleysky.jpg') center fixed no-repeat; color:#a1a1a1">
-	<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page - just 404, watch some sailing stones...</p>
-	</body>
-	</html>
-					`)
+				http.Redirect(w, r, "/error404", http.StatusMovedPermanently)
+
+				/*fmt.Fprint(w, `<html>
+				<head>
+				<link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png?v=6">
+				<link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png?v=6">
+				<link rel="shortcut icon" href="/static/icons/favicon.ico?v=6">
+				</head>
+				<body style="background: #1a1a1a url('static/img/deathvalleysky.jpg') center fixed no-repeat; color:#a1a1a1">
+				<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page - just 404, watch some sailing stones...</p>
+				</body>
+				</html>
+								`)*/
 				//http.Error(w, "Custom 404 Not Found Page", http.StatusNotFound)
 				return
 			}
