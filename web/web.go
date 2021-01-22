@@ -366,12 +366,13 @@ func NotFound() func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			handler := middleware.Handler(r.Context())
+			//https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Deathvalleysky_nps_big.jpg/1920px-Deathvalleysky_nps_big.jpg
 			if handler == nil {
 				fmt.Fprint(w, `<html>
 	<head>
 	</head>
-	<body style="background: #1a1a1a url('https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Deathvalleysky_nps_big.jpg/1920px-Deathvalleysky_nps_big.jpg') center fixed no-repeat; color:#a1a1a1">
-	<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page, watch some sailing stones...</p>
+	<body style="background: #1a1a1a url('static/img/deathvalleysky.jpg') center fixed no-repeat; color:#a1a1a1">
+	<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page - just 404, watch some sailing stones...</p>
 	</body>
 	</html>
 					`)
