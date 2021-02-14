@@ -378,18 +378,6 @@ func NotFound() func(http.Handler) http.Handler {
 			if handler == nil {
 				http.Redirect(w, r, "/error404", http.StatusMovedPermanently)
 
-				/*fmt.Fprint(w, `<html>
-				<head>
-				<link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png?v=6">
-				<link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png?v=6">
-				<link rel="shortcut icon" href="/static/icons/favicon.ico?v=6">
-				</head>
-				<body style="background: #1a1a1a url('static/img/deathvalleysky.jpg') center fixed no-repeat; color:#a1a1a1">
-				<p style="text-align:center;font-size:250%;margin-top:33px;font-family:'Lato',sans-serif">No such page - just 404, watch some sailing stones...</p>
-				</body>
-				</html>
-								`)*/
-				//http.Error(w, "Custom 404 Not Found Page", http.StatusNotFound)
 				return
 			}
 			h.ServeHTTP(w, r)
@@ -416,8 +404,6 @@ func setupRootMux() {
 	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
 	mux.Handle(pat.Get("/robots.txt"), http.HandlerFunc(handleRobotsTXT))
 	mux.Handle(pat.Get("/ads.txt"), http.HandlerFunc(handleAdsTXT))
-
-	mux.Use(NotFound())
 
 	// General middleware
 	mux.Use(SkipStaticMW(gziphandler.GzipHandler, ".css", ".js", ".map"))
