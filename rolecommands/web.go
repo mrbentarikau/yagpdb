@@ -72,10 +72,10 @@ func (p *Plugin) InitWeb() {
 	subMux := goji.SubMux()
 	web.CPMux.Handle(pat.New("/rolecommands/*"), subMux)
 	web.CPMux.Handle(pat.New("/rolecommands"), subMux)
-
+	web.CPMux.Use(web.NotFound())
 	subMux.Use(web.RequireBotMemberMW)
 	subMux.Use(web.RequirePermMW(discordgo.PermissionManageRoles))
-
+	subMux.Use(web.NotFound())
 	// Setup routes
 	getIndexHandler := web.ControllerHandler(HandleGetIndex, "cp_rolecommands")
 	getGroupHandler := web.ControllerHandler(func(w http.ResponseWriter, r *http.Request) (tmpl web.TemplateData, err error) {

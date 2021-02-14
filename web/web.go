@@ -283,7 +283,7 @@ func setupRoutes() *goji.Mux {
 	ServerPubliAPIMux.Use(RequireActiveServer)
 	ServerPubliAPIMux.Use(LoadCoreConfigMiddleware)
 	ServerPubliAPIMux.Use(SetGuildMemberMiddleware)
-	ServerPublicMux.Use(NotFound())
+	ServerPubliAPIMux.Use(NotFound())
 
 	RootMux.Handle(pat.Get("/api/:server"), ServerPubliAPIMux)
 	RootMux.Handle(pat.Get("/api/:server/*"), ServerPubliAPIMux)
@@ -345,6 +345,7 @@ func setupRoutes() *goji.Mux {
 			}
 
 			CPMux.Handle(pat.Get("/homewidgets/"+p.PluginInfo().SysName), handler)
+			CPMux.Use(NotFound())
 		}
 	}
 
