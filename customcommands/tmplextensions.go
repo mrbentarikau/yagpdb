@@ -911,17 +911,24 @@ func ToLightDBEntry(m *models.TemplatesUserDatabase) (*LightDBEntry, error) {
 	if common.IsNumber(dst) {
 		decodedValue = m.ValueNum
 	}
+	var user discordgo.User
+	var trouble bool
 
-	/*member, err := bot.GetMember(m.GuildID, m.UserID)
-	userPtr := member.DGoUser()
+	member, err := bot.GetMember(m.GuildID, m.UserID)
+	if err != nil {
+		trouble = true
+	}
 
-	user := discordgo.User{
-		ID:            userPtr.ID,
-		Username:      userPtr.Username,
-		Bot:           userPtr.Bot,
-		Avatar:        userPtr.Avatar,
-		Discriminator: userPtr.Discriminator,
-	}*/
+	if !trouble {
+		userPtr := member.DGoUser()
+		user = discordgo.User{
+			ID:            userPtr.ID,
+			Username:      userPtr.Username,
+			Bot:           userPtr.Bot,
+			Avatar:        userPtr.Avatar,
+			Discriminator: userPtr.Discriminator,
+		}
+	}
 
 	entry := &LightDBEntry{
 		ID:      m.ID,
@@ -936,7 +943,12 @@ func ToLightDBEntry(m *models.TemplatesUserDatabase) (*LightDBEntry, error) {
 
 		ExpiresAt: m.ExpiresAt.Time,
 	}
-	entry.UserID = entry.UserID
+
+	if trouble {
+		entry.UserID = entry.UserID
+	} else {
+		entry.User = user
+	}
 
 	return entry, nil
 }
