@@ -912,6 +912,17 @@ func ToLightDBEntry(m *models.TemplatesUserDatabase) (*LightDBEntry, error) {
 		decodedValue = m.ValueNum
 	}
 
+	member, err := bot.GetMember(m.GuildID, m.UserID)
+	userPtr := member.DGoUser()
+
+	user := discordgo.User{
+		ID:            userPtr.ID,
+		Username:      userPtr.Username,
+		Bot:           userPtr.Bot,
+		Avatar:        userPtr.Avatar,
+		Discriminator: userPtr.Discriminator,
+	}
+
 	entry := &LightDBEntry{
 		ID:      m.ID,
 		GuildID: m.GuildID,
@@ -925,7 +936,7 @@ func ToLightDBEntry(m *models.TemplatesUserDatabase) (*LightDBEntry, error) {
 
 		ExpiresAt: m.ExpiresAt.Time,
 	}
-	entry.UserID = entry.UserID
+	entry.User = user
 
 	return entry, nil
 }
