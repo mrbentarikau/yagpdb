@@ -543,10 +543,11 @@ func tmplDBGet(ctx *templates.Context) interface{} {
 			return nil, nil
 		}
 
-		var result []*models.TemplatesUserDatabase
+		return ToLightDBEntry(m)
+		/*var result []*models.TemplatesUserDatabase
 		result = append(result, m)
-
-		return tmplResultSetToLightDBEntries(ctx, ctx.GS, result), nil
+		//
+		return tmplResultSetToLightDBEntries(ctx, ctx.GS, result), nil*/
 	}
 }
 
