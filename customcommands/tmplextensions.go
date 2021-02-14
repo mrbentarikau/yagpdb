@@ -543,7 +543,10 @@ func tmplDBGet(ctx *templates.Context) interface{} {
 			return nil, nil
 		}
 
-		return ToLightDBEntry(m)
+		var result []*models.TemplatesUserDatabase
+		result = append(result, m)
+
+		return tmplResultSetToLightDBEntries(ctx, ctx.GS, result), nil
 	}
 }
 
@@ -921,7 +924,7 @@ func ToLightDBEntry(m *models.TemplatesUserDatabase) (*LightDBEntry, error) {
 
 		ExpiresAt: m.ExpiresAt.Time,
 	}
-	entry.User.ID = entry.UserID
+	entry.UserID = entry.UserID
 
 	return entry, nil
 }
