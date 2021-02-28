@@ -18,6 +18,7 @@ require (
 	github.com/dpatrie/urbandictionary v0.0.0-20151214192647-3b38cbf4cb81
 	github.com/ericlagergren/decimal v0.0.0-20190729173012-f05d33913e5a // indirect
 	github.com/fatih/structs v1.1.0
+	github.com/friendsofgo/errors v0.9.2 // indirect
 	github.com/getsentry/sentry-go v0.7.0
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
@@ -26,7 +27,7 @@ require (
 	github.com/jarcoal/httpmock v1.0.4 // indirect
 	github.com/jinzhu/gorm v1.9.10
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/mrbentarikau/cardsagainstdiscord v1.2.1
+	github.com/jonas747/cardsagainstdiscord v1.1.1-0.20200617121715-2c969a853358
 	github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8
 	github.com/jonas747/dcmd v1.2.4
 	github.com/jonas747/dice v0.0.0-20170619144252-7735f6ee7b69
@@ -42,19 +43,20 @@ require (
 	github.com/jonas747/when v0.0.3-0.20201118193825-7feeddcd993f
 	github.com/justinian/dice v0.0.0-20170728002755-6a18b51d929c // indirect
 	github.com/karlseguin/ccache v2.0.3+incompatible
+	github.com/karlseguin/expect v1.0.1 // indirect
 	github.com/karlseguin/rcache v1.0.1
 	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481
 	github.com/lunixbochs/vtclean v1.0.0
 	github.com/mediocregopher/radix/v3 v3.5.0
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/miolini/datacounter v0.0.0-20190724021726-aa48df3a02c1
+	github.com/mrbentarikau/cardsagainstdiscord v1.2.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.5.1
 	github.com/russross/blackfriday v1.5.2
 	github.com/shirou/gopsutil v2.18.12+incompatible
-	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/shurcooL/github_flavored_markdown v0.0.0-20181002035957-2122de532470
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cast v1.3.1 // indirect
@@ -74,9 +76,9 @@ require (
 	golang.org/x/image v0.0.0-20190902063713-cb417be4ba39
 	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11
 	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5
+	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 	google.golang.org/api v0.40.0
 	gopkg.in/karlseguin/expect.v1 v1.0.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
-replace github.com/jonas747/template => /home/caubert/go/src/github.com/jonas747/template

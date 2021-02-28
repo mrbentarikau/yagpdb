@@ -3,10 +3,10 @@ package cah
 import (
 	"strings"
 
+	"github.com/jonas747/cardsagainstdiscord"
 	"github.com/jonas747/dcmd"
 	"github.com/jonas747/yagpdb/bot"
 	"github.com/jonas747/yagpdb/commands"
-	"github.com/mrbentarikau/cardsagainstdiscord"
 	"github.com/sirupsen/logrus"
 )
 
