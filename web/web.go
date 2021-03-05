@@ -9,6 +9,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/Masterminds/go-fileserver"
 	"github.com/NYTimes/gziphandler"
 	"github.com/jonas747/discordgo"
 	"github.com/jonas747/yagpdb/common"
@@ -399,9 +400,13 @@ func setupRootMux() {
 
 		mux.Use(RequestLogger(requestLogger))
 	}
+	fileserver.NotFoundHandler = func(w http.ResponseWriter, req *http.Request) {
+		http.Redirect(w, req, "/error404", http.StatusMovedPermanently)
+	}
 
 	// Setup fileserver
-	mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
+	//mux.Handle(pat.Get("/static/*"), http.FileServer(http.Dir(StaticFileserverDir)))
+	mux.Handle(pat.Get("/static/*"), fileserver.FileServer(http.Dir(StaticFileserverDir)))
 	mux.Handle(pat.Get("/robots.txt"), http.HandlerFunc(handleRobotsTXT))
 	mux.Handle(pat.Get("/ads.txt"), http.HandlerFunc(handleAdsTXT))
 
