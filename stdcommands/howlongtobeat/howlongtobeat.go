@@ -110,7 +110,6 @@ var Command = &commands.YAGCommand{
 
 func embedCreator(hltbQuery []hltb, i int, paginated bool) *discordgo.MessageEmbed {
 	hltbURL := fmt.Sprintf("%s://%s", hltbScheme, hltbHost)
-	fmt.Println("KRAAKA:::", hltbQuery)
 	embed := &discordgo.MessageEmbed{
 		Author: &discordgo.MessageEmbedAuthor{
 			Name: hltbQuery[i].GameTitle,
